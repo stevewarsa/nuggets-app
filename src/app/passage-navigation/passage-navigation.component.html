@@ -1,0 +1,45 @@
+<div class="row">
+  <div class="col-md col-lg col-sm" style="text-align: center;">
+    <p class="psg-nav">
+      <a (click)="showAnswer()">
+        <i class="fa fa-{{questionIcon}}" [ngStyle]="{ 'color': iconFontColor }"></i>
+      </a>&nbsp;
+      <a (click)="prev()">
+        <i class="fa fa-arrow-left" style="color: lightgreen;"></i>
+      </a>&nbsp;
+      <a (click)="next()">
+        <i class="fa fa-arrow-right" style="color: lightgreen;"></i>
+      </a>&nbsp;
+      <a (click)="stopPracticeSession()">
+        <i class="fa fa-window-close" style="color: red;"></i>
+      </a>&nbsp;
+      <a (click)="toggleAdditionalOptions()" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+        <i class="fa fa-ellipsis-h" style="color: white;"></i>
+      </a>
+    </p>
+    <div class="dropdown-menu dropdown-menu-right" [ngbCollapse]="isCollapsed">
+      <a style="color: black !important;" class="dropdown-item" [routerLink]="['/edit']"><i class="fa fa-edit"></i> Edit</a>
+      <a (click)="delete()" style="color: black !important;" class="dropdown-item">
+        <i class="fa fa-close"></i> Delete...
+      </a>    
+      <a (click)="everyTime()" style="color: black !important;" class="dropdown-item">
+        <i class="fa fa-arrow-circle-up"></i> Every Time...
+      </a>    
+      <a style="color: black !important;" class="dropdown-item" [routerLink]="['/search']"><i class="fa fa-search"></i> Search</a>
+      <a style="color: black !important;" class="dropdown-item" [routerLink]="['/practiceSetup']"><i class="fa fa-play"></i> Practice Restart</a>
+      <a (click)="goToInterlinear()" style="color: black !important;" class="dropdown-item">
+        <i class="fa fa-external-link"></i> Interlinear View
+      </a>    
+      <a (click)="clipboardCopy()" style="color: black !important;" class="dropdown-item">
+        <i class="fa fa-copy"></i> Copy
+      </a>    
+    </div>
+</div>
+</div>
+<div class="row">
+  <div class="col-md col-lg col-sm" style="text-align: center;">
+    <strong>{{progressString}}</strong> &nbsp;<span style="color: magenta">[Frequency: <em>{{_frequencyString}}</em>]</span><br/>
+    Last Practiced: <span style="color: orange">{{lastPracticedDateString}}</span>
+    <hr/>
+  </div>
+</div>

@@ -1,0 +1,8 @@
+{
+    "/nuggets/server/*": {
+        "target": "http://ps11911.com",
+        "secure": false,
+        "changeOrigin": true,
+        "logLevel": "debug"
+    }
+}

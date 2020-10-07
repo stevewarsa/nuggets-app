@@ -1,0 +1,65 @@
+<div *ngIf="searching" class="container">
+  <div class="row mt-5">
+    <div class="col-md col-lg col-sm" style="text-align: center;">
+      <h2>{{searchingMessage}}</h2><img src="assets/ajax-loader.gif" />
+    </div>
+  </div>
+</div>
+<div *ngIf="!searching && (!allQuotes || allQuotes.length === 0)" class="container">
+  <div class="row mt-5">
+    <div class="col-md col-lg col-sm" style="text-align: left;">
+      <h4>There are no quotes in the quote database.  If you would like to add quotes, you can:</h4>
+      <ol style="text-align: left;">
+        <li *ngIf="currUser !== memoryService.GUEST_USER"><a style="cursor: pointer; text-decoration: underline;" [routerLink]="['/addQuote']" title="Add Quote">Add Your Own Quote</a></li>
+        <li *ngIf="currUser !== memoryService.GUEST_USER"><a style="cursor: pointer; text-decoration: underline;" [routerLink]="['/selectQuotes']" title="Select Quotes to Add">Select Quotes to Add from Another User</a></li>
+      </ol>
+    </div>
+  </div>
+</div>
+<div *ngIf="!searching && allQuotes && allQuotes.length > 0" class="container" (swipeleft)="swipe($event.type)" (swiperight)="swipe($event.type)">
+  <div class="row">
+    <div class="col-md col-lg col-sm" style="text-align: center;">
+      <div class="psg-nav">
+        <a class="psg-nav-icon" ngxClipboard [cbContent]="currentQuoteForClipboard" (cbOnSuccess)="clipboardCopyComplete()">
+          <i class="fa fa-copy" style="color: coral;"></i>
+        </a>
+        <a (click)="prev()">
+          <i class="fa fa-arrow-left" style="color: lightgreen;"></i>
+        </a>&nbsp;
+        <a (click)="next()">
+          <i class="fa fa-arrow-right" style="color: lightgreen;"></i>
+        </a>&nbsp;
+        <a (click)="toggleAdditionalOptions()" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+          <i class="fa fa-ellipsis-h" style="color: white;"></i>
+        </a>
+        <div class="dropdown-menu dropdown-menu-right" [ngbCollapse]="isCollapsed">
+          <a style="color: black !important;" class="dropdown-item" (click)="open(content)"><i class="fa fa-share-alt"></i>&nbsp; Send Quote...</a>
+          <a style="color: black !important;" class="dropdown-item" (click)="addNewQuote()"><i class="fa fa-plus"></i>&nbsp; Add Quote...</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md col-lg col-sm">
+      <p style="text-align: center;">{{currentIndex + 1}} of {{allQuotes.length}}</p>
+      <hr style="color: white !important; background: white;" />
+      <div [@newQuote]="currentQuote" (@newQuote.done)="logIt($event, 'quoteText')" class="nugget-view" [innerHTML]="currentQuote"
+        style="text-align: center;"></div>
+    </div>
+  </div>
+  <ng-template #content let-d="dismiss">
+    <div class="modal-header">
+      <h4 class="modal-title">Select Person To Send To</h4>
+      <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="container">
+        <ul class="list-group">
+          <li *ngFor="let user of users" class="list-group-item bg-dark text-white" (click)="sendQuoteToUser(user)">{{user.userName}}</li>
+        </ul>
+      </div>
+    </div>
+  </ng-template>
+</div>

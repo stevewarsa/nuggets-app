@@ -1,0 +1,126 @@
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md col-sm">
+      <h2 style="text-align: center;padding-top: 15px;">Bible Search</h2>
+    </div>
+    <hr style="background: white; width: 90%;" />
+  </div>
+  <div class="row justify-content-center" *ngIf="!searching && (searchResults === null || searchResults.length === 0)">
+    <form class="form-horizontal justify-content-center" role="form" style="font-size: large; width: 90%;">
+      <div class="form-group">
+        <div class="row">
+          <div class="col-md col-sm">
+            <label for="practiceMode" class="control-label">Section of Bible to Search:</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md col-sm">
+            <label class="radio-inline" style="margin: 5px;">
+              <input type="radio" name="testament" value="new" [(ngModel)]="testament" /> NT
+            </label>
+            <label class="radio-inline" style="margin: 5px;">
+              <input type="radio" name="testament" value="old" [(ngModel)]="testament" /> OT
+            </label>
+            <label class="radio-inline" style="margin: 5px;">
+              <input type="radio" name="testament" value="both" [(ngModel)]="testament" /> Full
+            </label>
+            <label class="radio-inline" style="margin: 5px;">
+              <input type="radio" name="testament" value="gospels" [(ngModel)]="testament" /> Gospels
+            </label>
+            <label class="radio-inline" style="margin: 5px;">
+              <input type="radio" name="testament" value="pauls_letters" [(ngModel)]="testament" /> Paul's Letters
+            </label>
+            <label class="radio-inline" style="margin: 5px;">
+              <input type="radio" name="testament" value="non_pauline_letters" [(ngModel)]="testament" /> Non-Pauline Letters
+            </label>
+          </div>
+        </div>
+      </div>
+      <hr style="background: white; width: 100%;" />
+      <div class="form-group">
+        <div class="col-md col-sm">
+          <div class="row">
+            <button style="margin-right: 10px;" (click)="toggleBookOptions()" type="button" class="btn btn-primary dropdown-toggle" [attr.aria-haspopup]="isBooklistCollapsed" [attr.aria-expanded]="!isBooklistCollapsed">Search Books</button>
+            <div class="dropdown-menu" [ngbCollapse]="isBooklistCollapsed">
+              <a *ngFor="let bibleBook of bibleBooks" (click)="selectBook(bibleBook)" style="color: black !important;" class="dropdown-item">{{bibleBook}}</a>
+            </div>
+            <label>{{book}}</label>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-md col-sm">
+          <div class="row">
+            <button (click)="toggleTranslationOptions()" type="button" class="btn btn-primary dropdown-toggle mr-3" [attr.aria-haspopup]="isTranslCollapsed" [attr.aria-expanded]="!isTranslCollapsed">Search Translation</button>
+            <div class="dropdown-menu" [ngbCollapse]="isTranslCollapsed">
+              <a *ngFor="let translationOption of translationOptions" (click)="selectTranslation(translationOption)" style="color: black !important;" class="dropdown-item">{{translationOption}}</a>
+            </div>
+            <label>{{translation}}</label>
+          </div>
+        </div>
+      </div>
+      <hr style="background: white; width: 100%;" />
+      <div class="form-group">
+        <div class="row">
+          <div class="col-md col-sm">
+            <label for="searchPhrase">Search Phrase</label>
+            <input type="text" [(ngModel)]="searchPhrase" class="form-control" id="searchPhrase" name="searchPhrase" (focus)="$event.target.select()" placeholder="Enter phrase to search for (wildcards allowed)">
+          </div>
+        </div>
+      </div>
+      <hr style="background: white; width: 100%;" />
+      <div class="form-group">
+        <div class="row">
+          <div class="btn-group">
+            <a role="button" (click)="doSearch()" class="btn btn-link no-padding-top-bottom" title="Start Search">
+              <i class="fa fa-search" style="margin-right: 5px; font-size: 32px !important;"></i>
+              <span class="helv-white">Search</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="row justify-content-center" *ngIf="searching">
+    <div class="col-md col-sm">
+      <div style="text-align: center;">
+        <p class="lead">{{searchingMessage}}</p><img src="assets/ajax-loader.gif" />
+      </div>
+    </div>
+  </div>
+  <div class="row justify-content-center" *ngIf="!searching && searchResults && searchResults.length > 0">
+    <div class="col-md col-sm">
+      <h4>Found {{searchResults.length}} '{{searchPhrase}}' <a style="color: blueviolet !important; font-size: 12px !important;" (click)="searchResults = null">Search Again</a></h4>
+      <table class="table table-bordered" style="font-size: 18px !important; margin: 5px;">
+        <tbody>
+            <tr>
+              <th>Passage Ref</th>
+              <th>Passage Text</th>
+            </tr>
+            <tr *ngFor="let passage of searchResults">
+              <td><a (click)="open(content, passage)" style="text-decoration: underline; color: #00FFFF !important;">{{getPassageRef(passage)}}</a></td>
+              <td [innerHTML]="getPassageText(passage)"></td>
+            </tr>
+        </tbody>
+      </table>
+      <h4 *ngIf="searchResults.length > 10">Found {{searchResults.length}} '{{searchPhrase}}' <a style="color: blueviolet !important; font-size: 12px !important;" (click)="searchResults = null">Search Again</a></h4>
+    </div>
+  </div>
+  <ng-template #content let-d="dismiss">
+    <div class="modal-header">
+      <h4 class="modal-title">Select Action</h4>
+      <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="container">
+        <ul class="list-group">
+          <li class="list-group-item bg-dark text-white" (click)="goToPassage()">View Chapter</li>
+          <li class="list-group-item bg-dark text-white" (click)="goToSurroundingVerses()">View Surrounding Verses</li>
+          <li class="list-group-item bg-dark text-white" ngxClipboard [cbContent]="passageTextForClipboard" (cbOnSuccess)="clipboardCopyComplete()">Copy to Clipboard</li>
+        </ul>
+      </div>
+    </div>
+  </ng-template>
+</div>

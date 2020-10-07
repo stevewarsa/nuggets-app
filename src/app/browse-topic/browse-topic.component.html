@@ -1,0 +1,11 @@
+<mem-browse-passage
+  [currentIndex]="currentIndex" 
+  [passagesLength]="passages?.length" 
+  [selectedTranslation]="translation" 
+  [searching]="searching" 
+  [searchingMessage]="searchingMessage" 
+  [passage]="passage" 
+  (nextEvent)="next()" 
+  (prevEvent)="prev()" 
+  (changeTranslationEvent)="selectTranslation($event)">
+</mem-browse-passage>

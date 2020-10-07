@@ -1,0 +1,73 @@
+<div *ngIf="searching" class="container">
+  <div class="row mt-5">
+    <div class="col-md col-lg col-sm" style="text-align: center;">
+      <h2>{{searchingMessage}}</h2>
+      <img src="assets/ajax-loader.gif" />
+    </div>
+  </div>
+</div>
+<div *ngIf="!searching" class="container" (swipeleft)="swipe($event.type)" (swiperight)="swipe($event.type)">
+  <div class="row">
+    <div class="col-md col-lg col-sm" style="text-align: center;">
+      <div class="psg-nav">
+        <a class="psg-nav-icon" *ngIf="_passage?.startVerse !== _passage?.endVerse" (click)="selectForCopy(content)">
+          <i class="fa fa-copy" style="color: coral;"></i>
+        </a>
+        <a class="psg-nav-icon" *ngIf="_passage?.startVerse === _passage?.endVerse" ngxClipboard [cbContent]="passageTextForClipboard" (cbOnSuccess)="clipboardCopyComplete()">
+          <i class="fa fa-copy" style="color: coral;"></i>
+        </a>
+        <a class="psg-nav-icon" (click)="prev()">
+          <i class="fa fa-arrow-left" style="color: lightgreen;"></i>
+        </a>
+        <a class="psg-nav-icon" (click)="next()">
+          <i class="fa fa-arrow-right" style="color: lightgreen;"></i>
+        </a>
+        <a class="psg-nav-icon" (click)="goToInterlinear()">
+          <i class="fa fa-external-link" style="color: indianred;"></i>
+        </a>
+        <a class="psg-nav-icon" (click)="toggleTranslationOptions()"  class="dropdown-toggle"
+          [attr.aria-haspopup]="isTranslCollapsed" [attr.aria-expanded]="!isTranslCollapsed">
+          <i class="fa fa-newspaper-o" style="color:yellow;"></i>
+        </a>
+        <div class="dropdown-menu dropdown-menu-right" [ngbCollapse]="isTranslCollapsed">
+          <a *ngFor="let translationOption of translationOptions" (click)="selectTranslation(translationOption)" style="color: black !important;"
+            class="dropdown-item">{{translationOption}}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md col-lg col-sm">
+      <div *ngIf="!searching" class="nugget-view" [innerHTML]="passageRef" style="text-align: center;"></div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md col-lg col-sm">
+      <hr style="color: white !important; background: white;" />
+      <div [@newPassage]="formattedPassageText" (@newPassage.done)="logIt($event, 'passageText')" class="nugget-view" [innerHTML]="formattedPassageText"
+        style="text-align: center;"></div>
+    </div>
+  </div>
+  <ng-template #content let-d="dismiss">
+    <div class="modal-header">
+      <h4 class="modal-title">Select Verses To Copy</h4>
+      <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="container">
+        <ul *ngIf="versesForSelection && versesForSelection.length > 0" class="list-group">
+          <li *ngFor="let verse of versesForSelection; let i = index" class="list-group-item text-white" style="background: black;">
+            <label class="checkbox-inline">
+              <input type="checkbox" name="{{i}}" (click)="selectVerseForCopy(i, $event)" [checked]="i === startVerseSelected || i === endVerseSelected" /><div innerHTML="{{getVerseDisplayForCheckbox(i, verse)}}"></div>
+            </label>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="modal-footer">
+        <button [disabled]="startVerseSelected === -1 || endVerseSelected === -1" type="button" id="cbCopy" class="btn btn-link no-padding-top-bottom" ngxClipboard [cbContent]="passageTextForClipboard" (cbOnSuccess)="clipboardCopyComplete()"><i class="fa fa-copy" style="margin-right: 5px; font-size: 32px !important;"></i> <span class="helv-white">Copy</span></button>
+    </div>
+  </ng-template>
+</div>
