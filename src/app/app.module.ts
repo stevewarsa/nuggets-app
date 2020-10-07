@@ -1,6 +1,6 @@
-import { BrowserModule, HammerGestureConfig, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
-import { Injectable, NgModule } from '@angular/core';
-
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { HammerModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AddNonbibleMemoryFactComponent } from './add-nonbible-memory-fact/add-nonbible-memory-fact.component';
@@ -44,19 +44,6 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
-@Injectable()
-export class MyHammerConfig extends HammerGestureConfig {
-  overrides = <any>{
-    'pinch': { enable: false },
-    'rotate': { enable: false }
-  }
-
-  // dynamically turn off user select blocking for Desktop
-  options = window.screen.width > 500 ? <any>{
-    cssProps: { userSelect: false }
-  } : {};
-}
 
 @NgModule({
   declarations: [
@@ -107,14 +94,10 @@ export class MyHammerConfig extends HammerGestureConfig {
     ClipboardModule,
     NgbModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    HammerModule
   ],
-  providers: [
-    {
-      provide: HAMMER_GESTURE_CONFIG,
-      useClass: MyHammerConfig
-    }
-  ],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
