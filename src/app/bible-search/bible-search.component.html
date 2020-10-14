@@ -94,12 +94,12 @@
       <table class="table table-bordered" style="font-size: 18px !important; margin: 5px;">
         <tbody>
             <tr>
-              <th>Passage Ref</th>
-              <th>Passage Text</th>
+              <th class="text-white">Passage Ref</th>
+              <th class="text-white">Passage Text</th>
             </tr>
             <tr *ngFor="let passage of searchResults">
               <td><a (click)="open(content, passage)" style="text-decoration: underline; color: #00FFFF !important;">{{getPassageRef(passage)}}</a></td>
-              <td [innerHTML]="getPassageText(passage)"></td>
+              <td class="text-white" [innerHTML]="getPassageText(passage)"></td>
             </tr>
         </tbody>
       </table>

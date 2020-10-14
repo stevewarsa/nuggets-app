@@ -43,6 +43,8 @@ if ($category == "quote") {
 }
 $statement = $db->prepare($selectSql);
 $statement->bindValue(':searchString', $modSearchString);
+error_log("Running SQL statement: " . $selectSql);
+error_log("with argument: " . $modSearchString);
 $results = $statement->execute();
 $arrayName = array();
 while ($row = $results->fetchArray()) {

@@ -198,11 +198,15 @@ export class PassageUtils {
   }
 
   public static updateAllMatches(find: string, str: string) {
-    let parts: string[] = find.split('*');
-    for (let part of parts) {
-      let regex: RegExp = new RegExp(part, 'ig');
-      str = str.replace(regex, "<span class='search_result'>$&</span>");
-    }
+    let stringToHighlight = find.replace("*", "(.*?)");
+    console.log("PassageUtils.updateAllMatches - Here is the regex wildcard: '" + stringToHighlight + "'");
+    let regex: RegExp = new RegExp(stringToHighlight, 'i');
+    str = str.replace(regex, "<span class='search_result'>$&</span>");
+    // let parts: string[] = find.split('*');
+    // for (let part of parts) {
+    //   let regex: RegExp = new RegExp(part, 'ig');
+    //   str = str.replace(regex, "<span class='search_result'>$&</span>");
+    // }
     return str;
   }
 
