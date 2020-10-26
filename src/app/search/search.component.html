@@ -36,7 +36,7 @@
     </div>
   </div>
   <div class="row" *ngIf="!processing && chapterRows && chapterRows.length > 0 && toggleChapterSelection">
-    <table class="table table-bordered" style="margin: 5px;">
+    <table class="table table-bordered text-white" style="margin: 5px;">
       <tbody>
           <tr>
               <th colspan="3" style="text-align: center;">Chapter</th>
@@ -55,7 +55,7 @@
     </table>
   </div>
   <div *ngIf="!processing && chapter && chapter > 0 && (!startVerse || !endVerse || toggleVerseSelection)" class="row">
-    <table class="table table-bordered" style="margin: 5px;">
+    <table class="table table-bordered text-white" style="margin: 5px;">
       <tbody>
         <tr>
           <th colspan="3" style="text-align: center;">Chapter: {{chapter}}</th>
