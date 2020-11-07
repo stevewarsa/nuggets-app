@@ -28,7 +28,7 @@ export class AddNonbibleQuoteComponent implements OnInit {
     //this.quote = event.target.value;
     const textArea = this.promptInput.nativeElement;
     textArea.style.overflow = 'hidden';
-    textArea.style.height = '0px';
+    textArea.style.height = 'auto';
     textArea.style.height = textArea.scrollHeight + 'px';
   }
 
