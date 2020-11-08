@@ -1,5 +1,5 @@
 cd /cygdrive/c/backup/code/nuggets-app/memory
-currDate=$(date +"%m-%d-%Y hh:mm:ss")
+currDate=$(date +"%m-%d-%Y %H:%M:%S")
 echo "Setting date/time to ${currDate}"
 sed -i "s/{{todaystr}}/${currDate}/g" src/environments/environment.prod.ts
 ng build --prod --base-href /nuggets/
