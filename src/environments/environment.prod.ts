@@ -1,3 +1,5 @@
+let todaystr = "{{todaystr}}";
 export const environment = {
-  production: true
+  production: true,
+  dateBuilt: todaystr
 };

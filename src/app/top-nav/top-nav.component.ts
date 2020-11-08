@@ -1,11 +1,12 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { MemoryService } from 'src/app/memory.service';
-import { ToastrService } from 'ngx-toastr';
-import { Passage } from 'src/app/passage';
-import { PassageUtils } from 'src/app/passage-utils';
-import { Router, NavigationEnd } from '@angular/router';
-import { Subject } from 'rxjs';
-import { CookieUtils } from 'src/app/cookie-utils';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {MemoryService} from 'src/app/memory.service';
+import {ToastrService} from 'ngx-toastr';
+import {Passage} from 'src/app/passage';
+import {PassageUtils} from 'src/app/passage-utils';
+import {Router} from '@angular/router';
+import {CookieUtils} from 'src/app/cookie-utils';
+import {ModalHelperService} from "src/app/modal-helper.service";
+import {environment} from "src/environments/environment";
 
 @Component({
   selector: 'mem-top-nav',
@@ -20,7 +21,7 @@ export class TopNavComponent implements OnInit, OnDestroy {
   currentPassage: Passage;
   passageSubscription: any;
 
-  constructor(public memoryService: MemoryService, public toastr: ToastrService, private router: Router) { }
+  constructor(public memoryService: MemoryService, public toastr: ToastrService, private router: Router, private modalHelper: ModalHelperService) { }
 
   ngOnInit() {
     if (window.screen.width < 500) { // 768px portrait
@@ -36,11 +37,11 @@ export class TopNavComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     // avoid memory leaks here by cleaning up after ourselves.
-    if (this.passageSubscription) {  
+    if (this.passageSubscription) {
        this.passageSubscription.unsubscribe();
     }
   }
-  
+
   clipboardCopyComplete() {
     this.toastr.info('The passage has been copied to the clipboard!', 'Success!');
   }
@@ -75,5 +76,9 @@ export class TopNavComponent implements OnInit, OnDestroy {
     }
     this.isCollapsed = !this.isCollapsed;
     return false;
+  }
+
+  showAbout() {
+    this.modalHelper.alert({message: 'Date Built: ' + environment.dateBuilt}).result.then(() => {});
   }
 }
