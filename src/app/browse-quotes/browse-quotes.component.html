@@ -34,6 +34,7 @@
         </a>
         <div class="dropdown-menu dropdown-menu-right" [ngbCollapse]="isCollapsed">
           <a style="color: black !important;" class="dropdown-item" (click)="open(content)"><i class="fa fa-share-alt"></i>&nbsp; Send Quote...</a>
+          <a style="color: black !important;" class="dropdown-item" (click)="editQuote()"><i class="fa fa-edit"></i>&nbsp; Edit Quote...</a>
           <a style="color: black !important;" class="dropdown-item" (click)="addNewQuote()"><i class="fa fa-plus"></i>&nbsp; Add Quote...</a>
         </div>
       </div>
@@ -43,8 +44,12 @@
     <div class="col-md col-lg col-sm">
       <p style="text-align: center;">{{currentIndex + 1}} of {{allQuotes.length}}</p>
       <hr style="color: white !important; background: white;" />
-      <div [@newQuote]="currentQuote" (@newQuote.done)="logIt($event, 'quoteText')" class="nugget-view" [innerHTML]="currentQuote"
+      <div *ngIf="!editingQuote" [@newQuote]="currentQuote" (@newQuote.done)="logIt($event, 'quoteText')" class="nugget-view" [innerHTML]="currentQuote"
         style="text-align: center;"></div>
+      <textarea #editTextElem [hidden]="!editingQuote" (input)="updateText($event.target.value)"  style="font-size: 2.0em; overflow: auto;" [rows]="rowCount" name="quoteText" id="quoteText" class="form-control" [textContent]="currentQuoteForClipboard"></textarea>
+      <div *ngIf="editingQuote" class="row mt-3">
+        <div class="col"><button class="btn btn-primary mr-2" (click)="updateQuote()">Save</button> <button (click)="editingQuote = false" class="btn btn-secondary">Cancel</button></div>
+      </div>
     </div>
   </div>
   <ng-template #content let-d="dismiss">

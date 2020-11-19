@@ -6,6 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { ModalHelperService } from '../modal-helper.service';
 import { Constants } from '../constants';
 import { PassageUtils } from '../passage-utils';
+import {Quote} from "src/app/quote";
 
 @Component({
   selector: 'mem-list-facts-and-quotes',
@@ -16,12 +17,12 @@ export class ListFactsAndQuotesComponent implements OnInit {
   searchCategory: string = 'quote';
   searching: boolean = false;
   searchingMessage: string = null;
-  searchResults: any[] = [];
+  searchResults: Quote[] = [];
   currentUser: string = null;
 
   constructor(
-    private memoryService: MemoryService, 
-    private route: Router, 
+    private memoryService: MemoryService,
+    private route: Router,
     private clipboardService: ClipboardService,
     public toastr: ToastrService,
     private modalHelper: ModalHelperService) { }
@@ -35,7 +36,7 @@ export class ListFactsAndQuotesComponent implements OnInit {
     }
     this.searching = true;
     this.searchingMessage = "Retrieving all quotes...";
-    this.memoryService.getQuoteList().subscribe((results: any[]) => {
+    this.memoryService.getQuoteList().subscribe((results: Quote[]) => {
       console.log(results);
       this.searchResults = results;
       this.searching = false;

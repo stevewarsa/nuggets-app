@@ -1,34 +1,37 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import {Component, OnInit, Injector, ElementRef, ViewChild, AfterViewInit} from '@angular/core';
 import { MemoryService } from 'src/app/memory.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { PassageUtils } from 'src/app/passage-utils';
-import { trigger, state, style, animate, transition } from '@angular/animations';
+import { trigger, style, animate, transition } from '@angular/animations';
 import { ToastrService } from 'ngx-toastr';
 import { NgbModal, NgbModalRef, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { MemUser } from 'src/app/mem-user';
 import { ModalHelperService } from 'src/app/modal-helper.service';
 import { StringUtils } from 'src/app/string.utils';
+import {Quote} from "src/app/quote";
 
 @Component({
+  styleUrls: ['./browse-quotes.component.css'],
   templateUrl: './browse-quotes.component.html',
   animations: [
     trigger('newQuote', [
       transition('* => *', [
-        style({opacity: 0.5, transform: 'scale(0.8)'}), 
+        style({opacity: 0.5, transform: 'scale(0.8)'}),
         animate('300ms ease-in', style({opacity: 1, transform: 'scale(1)'}))
       ])
     ])
   ]
 })
-export class BrowseQuotesComponent implements OnInit {
+export class BrowseQuotesComponent implements OnInit, AfterViewInit {
   searching: boolean = false;
   searchingMessage: string = null;
   SWIPE_ACTION = { LEFT: 'swipeleft', RIGHT: 'swiperight' };
   direction: string = null;
-  allQuotes: any[] = [];
+  allQuotes: Quote[] = [];
   currentIndex: number = 0;
   currentQuote: string = "";
   currentQuoteForClipboard: string = "";
+  currentQuoteUpdatedText: string = null;
   isCollapsed: boolean = true;
   private openModal: NgbModalRef;
   private closeResult: string;
@@ -36,13 +39,18 @@ export class BrowseQuotesComponent implements OnInit {
   mappings: any[] = [];
   startingId: number = 0;
   currUser: string = null;
+  editingQuote: boolean = false;
+  rowCount: number;
+  colCount: number;
+
+  @ViewChild("editTextElem") private editTextElem: ElementRef;
 
   constructor(
-    public memoryService: MemoryService, 
-    private route: Router, 
-    public toastr: ToastrService, 
-    private modalService: NgbModal, 
-    private modalHelperService: ModalHelperService, 
+    public memoryService: MemoryService,
+    private route: Router,
+    public toastr: ToastrService,
+    private modalService: NgbModal,
+    private modalHelperService: ModalHelperService,
     private activeRoute:ActivatedRoute,
     private injector: Injector) { }
 
@@ -54,7 +62,7 @@ export class BrowseQuotesComponent implements OnInit {
       return;
     }
     if (this.memoryService.searchQuotesResult) {
-      let quotes = this.filterOutNonApprovedQuotes(this.memoryService.searchQuotesResult);
+      let quotes = BrowseQuotesComponent.filterOutNonApprovedQuotes(this.memoryService.searchQuotesResult);
       PassageUtils.shuffleArray(quotes);
       this.allQuotes = quotes;
       this.currentIndex = this.findStartingQuote();
@@ -67,13 +75,13 @@ export class BrowseQuotesComponent implements OnInit {
       }
       this.searching = true;
       this.searchingMessage = 'Retrieving quote list...';
-      this.memoryService.getQuoteList().subscribe((quotes: any[]) => {
+      this.memoryService.getQuoteList().subscribe((quotes: Quote[]) => {
         if (!quotes || quotes.length === 0) {
           this.searching = false;
           this.searchingMessage = null;
           return;
         }
-        quotes = this.filterOutNonApprovedQuotes(quotes);
+        quotes = BrowseQuotesComponent.filterOutNonApprovedQuotes(quotes);
         if (!quotes || quotes.length === 0) {
           this.searching = false;
           this.searchingMessage = null;
@@ -89,8 +97,8 @@ export class BrowseQuotesComponent implements OnInit {
     }
   }
 
-  private filterOutNonApprovedQuotes(quotes: any[]): any[] {
-    let modQuotes: any[] = [];
+  private static filterOutNonApprovedQuotes(quotes: Quote[]): Quote[] {
+    let modQuotes: Quote[] = [];
     for (let quote of quotes) {
       if (StringUtils.isEmpty(quote.approved) || quote.approved === 'Y') {
         modQuotes.push(quote);
@@ -135,6 +143,7 @@ export class BrowseQuotesComponent implements OnInit {
   }
 
   private displayQuote() {
+    this.editingQuote = false;
     this.currentQuote = PassageUtils.updateLineFeedsWithBr(this.allQuotes[this.currentIndex].answer);
     this.currentQuoteForClipboard = this.allQuotes[this.currentIndex].answer;
   }
@@ -161,17 +170,17 @@ export class BrowseQuotesComponent implements OnInit {
         this.searching = false;
         this.searchingMessage = null;
       });
-  
+
       this.openModal = this.modalService.open(content);
       this.openModal.result.then((result) => {
         this.closeResult = `Closed with: ${result}`;
       }, (reason) => {
-        this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+        this.closeResult = `Dismissed ${BrowseQuotesComponent.getDismissReason(reason)}`;
       });
     });
   }
 
-  private getDismissReason(reason: any): string {
+  private static getDismissReason(reason: any): string {
     if (reason === ModalDismissReasons.ESC) {
       return 'by pressing ESC';
     } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
@@ -221,7 +230,7 @@ export class BrowseQuotesComponent implements OnInit {
             }
             this.searching = false;
             this.searchingMessage = null;
-          });  
+          });
         }, () => {
           console.log("No email entered, NOT Sending quote to: ");
           console.log(user);
@@ -235,11 +244,46 @@ export class BrowseQuotesComponent implements OnInit {
   }
 
   logIt(event: any, mode: string) {
-    console.log('Here is the mode: ' + mode + '.  Here is the event: ');
-    console.log(event);
+    // console.log('Here is the mode: ' + mode + '.  Here is the event: ');
+    // console.log(event);
   }
 
   clipboardCopyComplete() {
     this.toastr.info('The passage has been copied to the clipboard!', 'Success!');
+  }
+
+  updateQuote() {
+    this.searching = true;
+    this.searchingMessage = "Updating quote...";
+    this.allQuotes[this.currentIndex].answer = this.currentQuoteUpdatedText;
+    console.log("Here is the updated quote:");
+    console.log(this.allQuotes[this.currentIndex]);
+    this.memoryService.updateQuote(this.allQuotes[this.currentIndex]).subscribe(response => {
+      this.editingQuote = false;
+      this.searching = false;
+      this.searchingMessage = null;
+      this.displayQuote();
+    }, () => {
+      this.searching = false;
+      this.searchingMessage = null;
+    });
+  }
+
+  editQuote() {
+    this.editingQuote = true;
+    this.isCollapsed = true;
+    let lineFeeds = this.currentQuoteForClipboard.split("\n").length * 2;
+    this.rowCount = Math.ceil((this.currentQuoteForClipboard.length + lineFeeds) / this.editTextElem.nativeElement.cols);
+    // console.log("displayQuote - lineFeeds=" + lineFeeds + ",quoteLength=" + this.currentQuoteForClipboard.length + ", colCount=" + this.editTextElem.nativeElement.cols + ",rowCount" + this.rowCount);
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.colCount = this.editTextElem.nativeElement.cols;
+    }, 500);
+  }
+
+  updateText(value: string) {
+    this.currentQuoteUpdatedText = value;
   }
 }

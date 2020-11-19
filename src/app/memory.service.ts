@@ -5,6 +5,7 @@ import { MemUser } from 'src/app/mem-user';
 import { UpdatePassageParam } from 'src/app/update-passage-param';
 import { Constants } from 'src/app/constants';
 import { HttpClient } from '@angular/common/http';
+import {Quote} from "src/app/quote";
 
 @Injectable({
   providedIn: 'root'
@@ -127,9 +128,9 @@ export class MemoryService {
     return this.httpService.get<any[]>(this._url + 'get_tag_list.php');
   }
 
-  public getQuoteList(userName?: string): Observable<any[]> {
+  public getQuoteList(userName?: string): Observable<Quote[]> {
     console.log('MemoryService.getQuoteList - calling ' + this._url + 'get_quote_list.php?user=' + (userName ? userName : this.currentUser));
-    return this.httpService.get<any[]>(this._url + 'get_quote_list.php?user=' + (userName ? userName : this.currentUser));
+    return this.httpService.get<Quote[]>(this._url + 'get_quote_list.php?user=' + (userName ? userName : this.currentUser));
   }
 
   public setTopicList(topicList: any[]) {
@@ -188,6 +189,12 @@ export class MemoryService {
     quote.category = 'quote';
     console.log('MemoryService.addNonBibleMemoryFact - calling ' + this._url + 'add_nonbible_memory_fact.php');
     return this.httpService.post<string>(this._url + 'add_nonbible_memory_fact.php', quote);
+  }
+
+  public updateQuote(quote: Quote) {
+    let param = {user: this.currentUser, quote: quote};
+    console.log('MemoryService.updateQuote - calling ' + this._url + 'update_quote.php');
+    return this.httpService.post<string>(this._url + 'update_quote.php', param);
   }
 
   public getNonBibleMemoryFactList(): Observable<any[]> {
@@ -273,4 +280,5 @@ export class MemoryService {
   public getCachedPassages(): Passage[] {
     return this.cachedPassages;
   }
+
 }

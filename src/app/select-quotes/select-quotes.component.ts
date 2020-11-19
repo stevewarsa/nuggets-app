@@ -4,13 +4,14 @@ import { ModalHelperService } from 'src/app/modal-helper.service';
 import { MemUser } from 'src/app/mem-user';
 import { Router } from '@angular/router';
 import { PassageUtils } from 'src/app/passage-utils';
+import {Quote} from "src/app/quote";
 
 @Component({
   templateUrl: './select-quotes.component.html'
 })
 export class SelectQuotesComponent implements OnInit, AfterViewInit {
-  quotesForSelection: any[] = [];
-  myQuotes: any[] = [];
+  quotesForSelection: Quote[] = [];
+  myQuotes: Quote[] = [];
   selectedUser: MemUser = null;
   currUser: string = null;
   searching: boolean = false;
@@ -27,7 +28,7 @@ export class SelectQuotesComponent implements OnInit, AfterViewInit {
     }
     this.searching = true;
     this.searchingMessage = "Retrieving quotes for user " + this.currUser;
-    this.memoryService.getQuoteList().subscribe((quotes: any[]) => {
+    this.memoryService.getQuoteList().subscribe((quotes: Quote[]) => {
       this.myQuotes = quotes;
       this.searching = false;
       this.searchingMessage = null;
@@ -45,8 +46,8 @@ export class SelectQuotesComponent implements OnInit, AfterViewInit {
         this.selectedUser = selectedUser;
         this.searching = true;
         this.searchingMessage = "Retrieving quotes for selected user: " + this.selectedUser.userName;
-        this.memoryService.getQuoteList(this.selectedUser.userName).subscribe((quotes: any[]) => {
-          let filteredQuotes: any[] = this.filterQuotesAlreadyAddedFromUser(quotes);
+        this.memoryService.getQuoteList(this.selectedUser.userName).subscribe((quotes: Quote[]) => {
+          let filteredQuotes: Quote[] = this.filterQuotesAlreadyAddedFromUser(quotes);
           PassageUtils.shuffleArray(filteredQuotes);
           this.quotesForSelection = filteredQuotes;
           this.searching = false;
@@ -56,8 +57,8 @@ export class SelectQuotesComponent implements OnInit, AfterViewInit {
     }, 300);
   }
 
-  private filterQuotesAlreadyAddedFromUser(quotesFromOtherUser: any[]): any[] {
-    let returnArray: any[] = [];
+  private filterQuotesAlreadyAddedFromUser(quotesFromOtherUser: Quote[]): Quote[] {
+    let returnArray: Quote[] = [];
     for (let quoteFromOtherUser of quotesFromOtherUser) {
       let foundInMyQuotes: boolean = false;
       for (let myQuote of this.myQuotes) {
@@ -78,17 +79,17 @@ export class SelectQuotesComponent implements OnInit, AfterViewInit {
 
   private filterQuoteOutOfList(objectionId: number) {
     console.log("filterQuoteOutOfList - current quotes length: " + this.quotesForSelection.length);
-    let result: any[] = this.quotesForSelection.filter(quote => {
+    let result: Quote[] = this.quotesForSelection.filter(quote => {
       return quote.objectionId !== objectionId;
     });
     console.log("filterQuoteOutOfList - after filtering quotes length: " + result.length);
     this.quotesForSelection = result;
   }
 
-  addQuote(quote: any) {
+  addQuote(quote: Quote) {
     this.searching = true;
     this.searchingMessage = "Adding quote from selected user: " + this.selectedUser.userName;
-    let quoteToAdd: any = {
+    let quoteToAdd: Quote = <Quote>{
       prompt: quote.prompt,
       answer: quote.answer,
       sourceId: quote.objectionId,
