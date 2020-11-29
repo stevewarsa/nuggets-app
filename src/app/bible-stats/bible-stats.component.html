@@ -1,0 +1,31 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md col-sm">
+      <p class="lead">Bible Stats</p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md col-sm">
+      <p *ngIf="initializing">Below is the list Bible stats</p>
+      <img src="assets/ajax-loader.gif" *ngIf="initializing"/>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md col-sm">
+      <table border="1" *ngIf="!initializing">
+        <tr>
+          <th>Stat</th>
+          <th>Value</th>
+        </tr>
+        <tr>
+          <td>Chapter Count:</td>
+          <td>{{chapterCount | number }}</td>
+        </tr>
+        <tr>
+          <td>Verse Count:</td>
+          <td>{{verseCount | number }}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>

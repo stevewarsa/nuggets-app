@@ -26,6 +26,7 @@ import { SearchComponent } from './search/search.component';
 import { SelectQuotesComponent } from './select-quotes/select-quotes.component';
 import { TopicListComponent } from './topic-list/topic-list.component';
 import { ViewChapterComponent } from './view-chapter/view-chapter.component';
+import { BibleStatsComponent } from "src/app/bible-stats/bible-stats.component";
 
 
 const routes: Routes = [
@@ -45,6 +46,7 @@ const routes: Routes = [
   {path: 'edit', component: EditPassageComponent},
   {path: 'myverselist', component: MyVerseListComponent},
   {path: 'memorystats', component: MemoryStatsComponent},
+  {path: 'biblestats', component: BibleStatsComponent},
   {path: 'topiclist', component: TopicListComponent},
   {path: 'randomtopic', component: RandomTopicComponent},
   {path: 'browsenuggets', component: BrowseNuggetsComponent},

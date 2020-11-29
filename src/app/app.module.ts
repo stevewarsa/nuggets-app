@@ -44,6 +44,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { BibleStatsComponent } from './bible-stats/bible-stats.component';
 
 // custom configuration Hammerjs
 @Injectable()
@@ -93,7 +94,8 @@ export class HammerConfig extends HammerGestureConfig {
     QuoteSearchResultActionsComponent,
     ManageEmailsComponent,
     ReadingPlanComponent,
-    ListFactsAndQuotesComponent
+    ListFactsAndQuotesComponent,
+    BibleStatsComponent
   ],
   imports: [
     BrowserModule,
