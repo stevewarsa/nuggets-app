@@ -14,8 +14,8 @@ while ($row = $results->fetchArray()) {
 	$obj->bookId = $row['book_id'];
 	$obj->bookName = $row['book_name'];
 	$obj->chapter = $row['chapter'];
-        $obj->dateRead = $row['date_read'];
-        break;
+	$obj->dateRead = $row['date_read'];
+  break;
 }
 $db->close();
 print_r(json_encode($obj));

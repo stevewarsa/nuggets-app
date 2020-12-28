@@ -1,10 +1,9 @@
-import { transition } from '@angular/animations';
-import { Component, OnInit } from '@angular/core';
-import { MemoryService } from '../memory.service';
-import { forkJoin } from 'rxjs';
-import { Router } from '@angular/router';
+import {Component, OnInit} from '@angular/core';
+import {MemoryService} from '../memory.service';
+import {forkJoin} from 'rxjs';
+import {Router} from '@angular/router';
 import * as moment from 'moment';
-import { PassageUtils } from '../passage-utils';
+import {PassageUtils} from '../passage-utils';
 
 @Component({
   selector: 'mem-reading-plan',
@@ -27,8 +26,9 @@ export class ReadingPlanComponent implements OnInit {
   translation: string = null;
   currentUser: string = null;
   currentDayOfWeek: string = null;
-  
-  constructor(private route: Router, private memoryService: MemoryService) { 
+  allReadingPlanProgress: {bookId: number, bookName: string, chapter: number, dateRead: string, dayOfWeek: string}[] = [];
+
+  constructor(private route: Router, private memoryService: MemoryService) {
     this.booksByDay["Sunday"] = ["romans", "1-corinthians", "2-corinthians", "galatians", "ephesians", "philippians", "colossians", "1-thessalonians", "2-thessalonians", "1-timothy", "2-timothy", "titus", "philemon", "hebrews", "james", "1-peter", "2-peter", "1-john", "2-john", "3-john", "jude"];
     this.booksByDay["Monday"] = ["genesis", "exodus", "leviticus", "numbers", "deuteronomy"];
     this.booksByDay["Tuesday"] = ["joshua", "judges", "ruth", "1-samuel", "2-samuel", "1-kings", "2-kings", "1-chronicles", "2-chronicles", "ezra", "nehemiah", "esther"];
@@ -48,9 +48,11 @@ export class ReadingPlanComponent implements OnInit {
     let maxChapByBookObs = this.memoryService.getMaxChaptersByBook();
     this.currentDayOfWeek = this.days[moment().day()];
     let readingPlanObs = this.memoryService.getReadingPlanProgress(this.currentUser, this.currentDayOfWeek);
+    let allReadingPlanObs = this.memoryService.getAllReadingPlanProgress(this.currentUser);
     let prefsObs = this.memoryService.getPreferences();
-    forkJoin([maxChapByBookObs, readingPlanObs, prefsObs]).subscribe((response: any[]) => {
+    forkJoin([maxChapByBookObs, readingPlanObs, prefsObs, allReadingPlanObs]).subscribe((response: any[]) => {
       this.maxChapterByBook = response[0];
+      this.allReadingPlanProgress = response[3];
       if (response[1]) {
         this.lastChapterReadForDay = response[1];
       } else {

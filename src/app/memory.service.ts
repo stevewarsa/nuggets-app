@@ -38,6 +38,11 @@ export class MemoryService {
     return this.httpService.get<any>(this._url + 'get_reading_plan_progress.php?user=' + user + "&dayOfWeek=" + dayOfWeek);
   }
 
+  public getAllReadingPlanProgress(user: string): Observable<any> {
+    console.log('MemoryService.getAllReadingPlanProgress - calling ' + this._url + 'get_all_reading_plan_progress.php...');
+    return this.httpService.get<any>(this._url + 'get_all_reading_plan_progress.php?user=' + user);
+  }
+
   public updateReadingPlan(user: string, dayOfWeek: string, book: string, bookId: number, chapter: number): Observable<string> {
     console.log('MemoryService.updateReadingPlan - calling ' + this._url + 'update_reading_plan.php...');
     return this.httpService.get<any>(this._url + 'update_reading_plan.php?user=' + user + "&dayOfWeek=" + dayOfWeek + "&book=" + book + "&bookId=" + bookId + "&chapter=" + chapter);

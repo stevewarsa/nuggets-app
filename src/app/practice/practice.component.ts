@@ -1,13 +1,11 @@
-import { Verse } from 'src/app/verse';
-import { Passage } from 'src/app/passage';
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { MemoryService } from 'src/app/memory.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { PracticeSettings } from 'src/app/practice-settings';
-import { PassageUtils } from 'src/app/passage-utils';
+import {Passage} from 'src/app/passage';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {MemoryService} from 'src/app/memory.service';
+import {ActivatedRoute, Router} from '@angular/router';
+import {PassageUtils} from 'src/app/passage-utils';
 import * as moment from 'moment';
-import { Constants } from 'src/app/constants';
-import { Subscription } from 'rxjs/internal/Subscription';
+import {Constants} from 'src/app/constants';
+import {Subscription} from 'rxjs/internal/Subscription';
 
 @Component({
   templateUrl: './practice.component.html',
@@ -59,7 +57,7 @@ export class PracticeComponent implements OnInit, OnDestroy {
       this.memoryService.setCachedPassages(passages);
       // now sort them according to this practice session config
       let tempPassages: Passage[] = PassageUtils.sortAccordingToPracticeConfig(order, passages);
-      // if user is practicing by frequency, make it more challenging by randomizing 
+      // if user is practicing by frequency, make it more challenging by randomizing
       // the passages within each frequency group
       if (order === "by_freq") {
         this.passages = PassageUtils.randomizeWithinFrequencyGroups(tempPassages);
@@ -91,8 +89,8 @@ export class PracticeComponent implements OnInit, OnDestroy {
   showAnswer() {
     if (this.showPsgRefFirst && this.showingPassageRef) {
       this.searching = true;
-      this.searchingMessage = "Calling server to get passage " + 
-        (this.currentIndex + 1) + " with passage id " + 
+      this.searchingMessage = "Calling server to get passage " +
+        (this.currentIndex + 1) + " with passage id " +
         this.currentPassage.passageId + "...";
       let override:Passage = this.memoryService.getMemoryPassageTextOverride(this.currentPassage.passageId);
       if (override) {
@@ -118,7 +116,7 @@ export class PracticeComponent implements OnInit, OnDestroy {
           this.searching = false;
           this.searchingMessage = null;
         });
-      } 
+      }
       this.showingPassageRef = false;
     } else {
       // here, we're showing the passage text first, so, answer is passage ref
@@ -132,7 +130,7 @@ export class PracticeComponent implements OnInit, OnDestroy {
     this.findStartAtPassage();
     let currPassage: Passage = this.passages[this.currentIndex];
     this.selectedTranslation = Constants.translationMediumNames[currPassage.translationName];
-    this.searchingMessage = "Calling server to get passage " + (this.currentIndex + 1) + " with passage id " + 
+    this.searchingMessage = "Calling server to get passage " + (this.currentIndex + 1) + " with passage id " +
       currPassage.passageId + "...";
     if (this.showPsgRefFirst) {
       let override:Passage = this.memoryService.getMemoryPassageTextOverride(currPassage.passageId);
@@ -162,7 +160,7 @@ export class PracticeComponent implements OnInit, OnDestroy {
     this.memoryService.setCurrentPassage(newPassage, this.currentUser);
     let dt = new Date();
     let dtNum = dt.getTime();
-    let formattedDateTime = moment(dt).format('dddd, MMM d HH:mm:ss Z YYYY');
+    let formattedDateTime = moment().format("MM-DD-YY HH:mm:ss");
     // fire and forget...
     this.subscription = this.memoryService.updateLastViewed(this.currentUser, newPassage.passageId, dtNum, formattedDateTime).subscribe();
     this.searching = false;

@@ -1,8 +1,21 @@
 <div class="container">
-  <form class="form-inline">
-    <div class="form-group mb-2">
-      <span style="font-size: 32px;" class="mr-2">{{chapterToReadString}}</span> 
-      <button (click)="goToChapter()" type="button" class="btn btn-primary mb-2">Read</button>
-    </div>
-  </form>
+  <div class="row">
+    <form class="form-inline">
+      <div class="form-group mb-2">
+        <span style="font-size: 32px;" class="mr-2">{{chapterToReadString}}</span>
+        <button (click)="goToChapter()" type="button" class="btn btn-primary mb-2">Read</button>
+      </div>
+    </form>
+  </div>
+  <div [hidden]="allReadingPlanProgress.length === 0" class="row">
+    <h3>Reading plan progress</h3>
+  </div>
+  <div [hidden]="allReadingPlanProgress.length === 0" class="row">
+    <div class="col font-weight-bold"><u>Day/Date</u></div>
+    <div class="col font-weight-bold"><u>Chapter Read</u></div>
+  </div>
+  <div [hidden]="allReadingPlanProgress.length === 0" class="row" *ngFor="let readingEntry of allReadingPlanProgress">
+    <div class="col">{{readingEntry.dayOfWeek}} {{readingEntry.dateRead}}</div>
+    <div class="col">{{readingEntry.bookName}} {{readingEntry.chapter}}</div>
+  </div>
 </div>
