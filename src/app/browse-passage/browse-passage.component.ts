@@ -1,9 +1,10 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { trigger, state, style, animate, transition } from '@angular/animations';
+import { trigger, style, animate, transition } from '@angular/animations';
 import { Passage } from 'src/app/passage';
 import { PassageUtils } from 'src/app/passage-utils';
 import { NgbModalRef, NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
+import {VerseNumAndText} from "src/app/verse-num-and-text";
 
 @Component({
   selector: 'mem-browse-passage',
@@ -11,7 +12,7 @@ import { ToastrService } from 'ngx-toastr';
   animations: [
     trigger('newPassage', [
         transition('* => *', [
-          style({opacity: 0.5, transform: 'scale(0.8)'}), 
+          style({opacity: 0.5, transform: 'scale(0.8)'}),
           animate('300ms ease-in', style({opacity: 1, transform: 'scale(1)'}))
         ])
     ])
@@ -21,8 +22,8 @@ export class BrowsePassageComponent implements OnInit {
   _passage: Passage = null;
   passageRef: string = null;
   formattedPassageText: string = null;
-  versesForSelection: string[] = [];
-  passageForClipboardAsArray: string[] = [];
+  versesForSelection: VerseNumAndText[] = [];
+  passageForClipboardAsArray: VerseNumAndText[] = [];
   passageTextForClipboard: string = null;
   shortBook: boolean = true;
   isTranslCollapsed: boolean = true;
@@ -34,9 +35,9 @@ export class BrowsePassageComponent implements OnInit {
   startVerseSelected: number = -1;
   endVerseSelected: number = -1;
   interlinearURL: string;
-  
+
   constructor(private modalService: NgbModal, public toastr: ToastrService) { }
-  
+
   @Output() nextEvent: EventEmitter<string>  = new EventEmitter<string>();
   @Output() prevEvent: EventEmitter<string>  = new EventEmitter<string>();
   @Output() changeTranslationEvent: EventEmitter<string>  = new EventEmitter<string>();
@@ -63,7 +64,7 @@ export class BrowsePassageComponent implements OnInit {
         this.endVerseSelected = 0;
         this.prepareForCopyToClipboard();
       }
-      let urlQuery: string = null;
+      let urlQuery: string;
       if (this._passage.startVerse === this._passage.endVerse) {
         urlQuery = this._passage.bookName + "+" + this._passage.chapter + ":" + this._passage.startVerse + "&t=nas"
       } else {
@@ -108,8 +109,8 @@ export class BrowsePassageComponent implements OnInit {
   }
 
   selectForCopy(content) {
-    this.startVerseSelected = 0;
-    this.endVerseSelected = this.versesForSelection.length - 1;
+    this.startVerseSelected = this.versesForSelection[0].verseNum;
+    this.endVerseSelected = this.versesForSelection[this.versesForSelection.length - 1].verseNum;
     this.prepareForCopyToClipboard();
     this.openModal = this.modalService.open(content);
     this.openModal.result.then((result) => {
@@ -119,24 +120,22 @@ export class BrowsePassageComponent implements OnInit {
     });
   }
 
-  selectVerseForCopy(verseIndex: number, event: any) {
-    console.log("selectVerseForCopy - here is the checkbox event:");
-    console.log(event);
-    if (event.target.checked === false) {
+  selectVerseForCopy(verseNum: number, checked: boolean) {
+    if (!checked) {
       // this user unchecked a checkbox
-      console.log("User unselected checkbox with verse index: " + verseIndex);
-      if (this.startVerseSelected === verseIndex && this.endVerseSelected === verseIndex) {
+      console.log("User unselected checkbox with verse num: " + verseNum);
+      if (this.startVerseSelected === verseNum && this.endVerseSelected === verseNum) {
         this.startVerseSelected = -1;
         this.endVerseSelected = -1;
       } else {
-        if (this.startVerseSelected === verseIndex) {
+        if (this.startVerseSelected === verseNum) {
           if (this.endVerseSelected !== -1) {
             this.startVerseSelected = this.endVerseSelected;
           } else {
             this.startVerseSelected = -1;
           }
         }
-        if (this.endVerseSelected === verseIndex) {
+        if (this.endVerseSelected === verseNum) {
           if (this.startVerseSelected !== -1) {
             this.endVerseSelected = this.startVerseSelected;
           } else {
@@ -147,29 +146,29 @@ export class BrowsePassageComponent implements OnInit {
     } else {
       // if no verses are selected yet, set both start and end verse to the selected verse index number
       if (this.startVerseSelected === -1 && this.endVerseSelected === -1) {
-        this.startVerseSelected = verseIndex;
-        this.endVerseSelected = verseIndex;
+        this.startVerseSelected = verseNum;
+        this.endVerseSelected = verseNum;
       } else {
         // this means at least 1 verse is selected, so...
         // if the start verse is not selected
         if (this.startVerseSelected === -1) {
-          this.startVerseSelected = verseIndex;
+          this.startVerseSelected = verseNum;
           if (this.endVerseSelected < this.startVerseSelected) {
             this.endVerseSelected = this.startVerseSelected;
           }
         } else {
           // this means, the start verse is already selected
-          if (verseIndex >= this.startVerseSelected) {
+          if (verseNum >= this.startVerseSelected) {
             // so, if the verse selected this time is greater than the start verse
-            // which was previously selected, then the currently selected verse can 
+            // which was previously selected, then the currently selected verse can
             // be safely set as the end verse
-            this.endVerseSelected = verseIndex;
+            this.endVerseSelected = verseNum;
           } else {
             // this means that the currently selected verse is less than the previously
             // selected start verse, so set the end verse to the previously selected start verse
             // then set the start verse to the newly selected verse
             this.endVerseSelected = this.startVerseSelected;
-            this.startVerseSelected = verseIndex;
+            this.startVerseSelected = verseNum;
           }
         }
       }
@@ -184,24 +183,22 @@ export class BrowsePassageComponent implements OnInit {
       return;
     }
     let selectedPassage = PassageUtils.deepClonePassage(this._passage);
-    selectedPassage.startVerse = this.startVerseSelected + this._passage.startVerse;
-    selectedPassage.endVerse = this.endVerseSelected + this._passage.startVerse;
+    selectedPassage.startVerse = this.startVerseSelected;
+    selectedPassage.endVerse = this.endVerseSelected;
     let psgRefForClipboard: string = PassageUtils.getPassageStringNoIndex(selectedPassage, null, false);
     psgRefForClipboard += "\n\n";
     let psgForClipboard: string = "";
-    for (let i = this.startVerseSelected; i <= this.endVerseSelected; i++) {
-      if (i === this.startVerseSelected) {
-        psgForClipboard += this.passageForClipboardAsArray[i];
-      } else {
-        psgForClipboard += " " + this.passageForClipboardAsArray[i];
+    for (let verse of this.passageForClipboardAsArray) {
+      if (verse.verseNum >= this.startVerseSelected && verse.verseNum <= this.endVerseSelected) {
+        psgForClipboard += verse.verseText;
       }
     }
     psgForClipboard = psgForClipboard.trim();
     this.passageTextForClipboard = psgRefForClipboard + psgForClipboard;
   }
 
-  getVerseDisplayForCheckbox(i: number, verse: string): string {
-    return (i + this._passage.startVerse) + " " + verse;
+  getVerseDisplayForCheckbox(verse: VerseNumAndText): string {
+    return verse.verseNum + " " + verse.verseText;
   }
 
   clipboardCopyComplete() {

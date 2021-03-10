@@ -2,7 +2,7 @@
   <div class="row mt-5">
     <div class="col-md col-lg col-sm" style="text-align: center;">
       <h2>{{searchingMessage}}</h2>
-      <img src="assets/ajax-loader.gif" />
+      <img src="assets/ajax-loader.gif"  alt="Processing"/>
     </div>
   </div>
 </div>
@@ -25,7 +25,7 @@
         <a class="psg-nav-icon" (click)="goToInterlinear()">
           <i class="fa fa-external-link" style="color: indianred;"></i>
         </a>
-        <a class="psg-nav-icon" (click)="toggleTranslationOptions()"  class="dropdown-toggle"
+        <a class="psg-nav-icon dropdown-toggle" (click)="toggleTranslationOptions()"
           [attr.aria-haspopup]="isTranslCollapsed" [attr.aria-expanded]="!isTranslCollapsed">
           <i class="fa fa-newspaper-o" style="color:yellow;"></i>
         </a>
@@ -58,9 +58,9 @@
     <div class="modal-body">
       <div class="container">
         <ul *ngIf="versesForSelection && versesForSelection.length > 0" class="list-group">
-          <li *ngFor="let verse of versesForSelection; let i = index" class="list-group-item text-white" style="background: black;">
+          <li *ngFor="let verse of versesForSelection" class="list-group-item text-white" style="background: black;">
             <label class="checkbox-inline">
-              <input type="checkbox" name="{{i}}" (click)="selectVerseForCopy(i, $event)" [checked]="i === startVerseSelected || i === endVerseSelected" /><div innerHTML="{{getVerseDisplayForCheckbox(i, verse)}}"></div>
+              <input type="checkbox" name="{{verse.verseNum}}" (click)="selectVerseForCopy(verse.verseNum, $event.target.checked)" [checked]="verse.verseNum === startVerseSelected || verse.verseNum === endVerseSelected" /><span class="ml-2" innerHTML="{{getVerseDisplayForCheckbox(verse)}}"></span>
             </label>
           </li>
         </ul>

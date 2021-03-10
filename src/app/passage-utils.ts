@@ -1,6 +1,7 @@
-import { Passage } from "src/app/passage";
-import { Constants } from "src/app/constants";
-import { MemUser } from "src/app/mem-user";
+import {Passage} from "src/app/passage";
+import {Constants} from "src/app/constants";
+import {MemUser} from "src/app/mem-user";
+import {VerseNumAndText} from "src/app/verse-num-and-text";
 
 export class PassageUtils {
 
@@ -13,17 +14,6 @@ export class PassageUtils {
       }
     }
     return defaultTranslation;
-  }
-
-  public static getPref(prefs: any[], key: string, defaultValueToReturn: string): string {
-    if (prefs && prefs.length > 0) {
-      for (let pref of prefs) {
-        if (pref.key === key && pref.value && pref.value.length > 0) {
-          return pref.value;
-        }
-      }
-    }
-    return defaultValueToReturn;
   }
 
   public static getSurroundingVerses(passage: Passage, maxVerseByBookChapter: any[]): Passage {
@@ -65,7 +55,7 @@ export class PassageUtils {
   }
 
   public static getNextIndex(currentIndex: number, numberOfPassages: number, next: boolean): number {
-    let newIndex: number = -1;
+    let newIndex: number;
     if (next) {
       if (currentIndex === (numberOfPassages - 1)) {
         newIndex = 0;
@@ -104,7 +94,7 @@ export class PassageUtils {
     }
     return verseText;
   }
-  
+
   public static getFormattedPassageText(passage: Passage, showVerseNumbers: boolean): string {
     let verseLen: number = passage.verses.length;
     let verseText: string = "";
@@ -129,9 +119,9 @@ export class PassageUtils {
     }
     return verseText;
   }
-  
-  public static getFormattedVersesAsArray(passage: Passage): string[] {
-    let verses: string[] = [];
+
+  public static getFormattedVersesAsArray(passage: Passage): VerseNumAndText[] {
+    let verses: VerseNumAndText[] = [];
     let verseLen: number = passage.verses.length;
     for (let i = 0; i < verseLen; i++) {
       let verseText: string = "";
@@ -139,24 +129,25 @@ export class PassageUtils {
       for (let j = 0; j < versePartLen; j++) {
         if (passage.verses[i].verseParts[j].wordsOfChrist) {
           verseText += "<span class='wordsOfChrist'>";
-          verseText += passage.verses[i].verseParts[j].verseText
-            + " ";
+          verseText += passage.verses[i].verseParts[j].verseText + " ";
           verseText += "</span>";
         } else {
-          verseText += passage.verses[i].verseParts[j].verseText
-            + " ";
+          verseText += passage.verses[i].verseParts[j].verseText + " ";
         }
       }
-      verses.push(verseText);
+      let currVerse = new VerseNumAndText();
+      currVerse.verseText = verseText;
+      currVerse.verseNum = passage.verses[i].verseParts[0].verseNumber;
+      verses.push(currVerse);
     }
     return verses;
   }
 
-  public static getPassageForClipboardAsArray(passage: Passage): string[] {
+  public static getPassageForClipboardAsArray(passage: Passage): VerseNumAndText[] {
     if (!passage || !passage.verses || passage.verses.length === 0) {
       return [];
     }
-    let passageArray: string[] = [];
+    let passageArray: VerseNumAndText[] = [];
     let verseLen: number = passage.verses.length;
     for (let i = 0; i < verseLen; i++) {
       let verseText: string = "";
@@ -165,7 +156,10 @@ export class PassageUtils {
         verseText += passage.verses[i].verseParts[j].verseText
           + " ";
       }
-      passageArray.push(verseText);
+      let verse: VerseNumAndText = new VerseNumAndText();
+      verse.verseNum = passage.verses[i].verseParts[0].verseNumber;
+      verse.verseText = verseText;
+      passageArray.push(verse);
     }
     return passageArray;
   }
@@ -217,9 +211,9 @@ export class PassageUtils {
   }
 
   public static getPassageStringNoIndex(passage: Passage, transl: string, translShort: boolean, appendLetter?: string) {
-    var verseNumbers = null;
+    let verseNumbers: string;
     if (passage.startVerse === passage.endVerse) {
-      verseNumbers = passage.startVerse;
+      verseNumbers = passage.startVerse + "";
     } else {
       verseNumbers = passage.startVerse + "-" + passage.endVerse;
     }
@@ -228,7 +222,7 @@ export class PassageUtils {
       verseNumbers += appendLetter;
     }
 
-    let regularBook: string = null;
+    let regularBook: string;
     if (passage.bookName) {
       regularBook = this.getRegularBook(passage.bookId);
     } else {
@@ -245,22 +239,17 @@ export class PassageUtils {
     }
   }
 
-  public static getPassageStringNoLineBreak(passage: Passage, currentIndex: number, passagesLen: number, transl: string, shortBook: boolean, showProgress: boolean, appendLetter?: string): string {
-    let psgString: string = this.getPassageString(passage, currentIndex, passagesLen, transl, shortBook, showProgress, appendLetter);
-    return psgString.replace("<br/>", " ");
-  }
-
   public static getPassageString(passage: Passage, currentIndex: number, passagesLen: number, transl: string, shortBook: boolean, showProgress: boolean, appendLetter?: string): string {
-    let verseNumbers = null;
+    let verseNumbers: string;
     if (passage.startVerse === passage.endVerse)
-      verseNumbers = passage.startVerse;
+      verseNumbers = passage.startVerse + "";
     else
       verseNumbers =  passage.startVerse + "-" + passage.endVerse;
 
     if (appendLetter) {
       verseNumbers += appendLetter;
     }
-    
+
     let bookName: string = shortBook ? this.getShortBook(passage.bookId) : this.getRegularBook(passage.bookId);
     let translString: string = "";
     if (transl) {
@@ -271,7 +260,7 @@ export class PassageUtils {
     } else {
       return bookName + " " + passage.chapter + ":" + verseNumbers + translString;
     }
-    
+
   }
 
   public static getRegularBook(bookId: number) {
@@ -331,8 +320,7 @@ export class PassageUtils {
     for (let passage of passages) {
       let frequencyGroup: Passage[] = frequencyGroups[passage.frequencyDays];
       if (!frequencyGroup) {
-        let passagesForFrequencyGroup: Passage[] = [passage];
-        frequencyGroups[passage.frequencyDays] = passagesForFrequencyGroup;
+        frequencyGroups[passage.frequencyDays] = [passage];
       } else {
         frequencyGroup.push(passage);
         frequencyGroups[passage.frequencyDays] = frequencyGroup;

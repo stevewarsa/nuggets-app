@@ -30,8 +30,8 @@ export class BibleSearchComponent implements OnInit {
   translationOptions: string[] = ['all', 'niv', 'nas', 'nkj', 'esv', 'kjv', 'csb', 'nlt', 'bbe', 'asv'];
   bibleBooks: string[] = [];
   constructor(
-    private route: Router, 
-    private memoryService: MemoryService, 
+    private route: Router,
+    private memoryService: MemoryService,
     public toastr: ToastrService,
     private modalService: NgbModal) { }
 
@@ -55,7 +55,7 @@ export class BibleSearchComponent implements OnInit {
     console.log("translation: " + this.translation);
     console.log("testament: " + this.testament);
     console.log("searchPhrase: " + this.searchPhrase);
-    let translations: string[] = null;
+    let translations: string[];
     if (this.translation === 'all') {
       translations = this.translationOptions.filter(transl => transl !== 'all');
     } else {
@@ -100,10 +100,6 @@ export class BibleSearchComponent implements OnInit {
     this.isBooklistCollapsed = !this.isBooklistCollapsed;
   }
 
-  passageAction(selectedVerse: Passage) {
-    this.selectedVerse = selectedVerse;
-  }
-
   goToPassage() {
     console.log('Navigating to: ');
     console.log(this.selectedVerse);
@@ -122,7 +118,7 @@ export class BibleSearchComponent implements OnInit {
     }
     this.route.navigate(['/viewPassage'], {queryParams: {book: passageContext.bookName, chapter: passageContext.chapter, startVerse: passageContext.startVerse, endVerse: passageContext.endVerse, translation: this.translation}});
   }
-  
+
   clipboardCopyComplete() {
     this.toastr.info('The passage has been copied to the clipboard!', 'Success!');
     if (this.openModal) {
@@ -142,7 +138,7 @@ export class BibleSearchComponent implements OnInit {
   }
 
   populateVerseForClipboard(selectedVerse: Passage) {
-    if (selectedVerse && selectedVerse !== null) {
+    if (selectedVerse) {
       this.passageTextForClipboard = PassageUtils.getPassageForClipboard(selectedVerse);
       if (this.passageTextForClipboard === "" && this.memoryService.getCurrentUser()) {
         this.memoryService.getUpdatedCurrentPassageText().subscribe((passage: Passage) => {
