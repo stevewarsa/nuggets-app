@@ -59,8 +59,8 @@ export class PracticeComponent implements OnInit, OnDestroy {
       let tempPassages: Passage[] = PassageUtils.sortAccordingToPracticeConfig(order, passages);
       // if user is practicing by frequency, make it more challenging by randomizing
       // the passages within each frequency group
-      if (order === "by_freq") {
-        this.passages = PassageUtils.randomizeWithinFrequencyGroups(tempPassages);
+      if (order === PassageUtils.BY_FREQ) {
+        this.passages = PassageUtils.sortWithinFrequencyGroups(tempPassages, PassageUtils.BY_LAST_PRACTICED);
       } else {
         this.passages = tempPassages;
       }

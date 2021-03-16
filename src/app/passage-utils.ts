@@ -4,6 +4,9 @@ import {MemUser} from "src/app/mem-user";
 import {VerseNumAndText} from "src/app/verse-num-and-text";
 
 export class PassageUtils {
+  public static readonly RAND: string = "rand";
+  public static readonly BY_FREQ: string = "by_freq";
+  public static readonly BY_LAST_PRACTICED: string = "by_last_practiced_time";
 
   public static getPreferredTranslationFromPrefs(prefs: any[], defaultTranslation: string): string {
     if (prefs && prefs.length > 0) {
@@ -283,15 +286,15 @@ export class PassageUtils {
   }
 
   public static sortAccordingToPracticeConfig(order: string, arr: any[]): any[] {
-    if (order == "rand") {
+    if (order == PassageUtils.RAND) {
       //console.log("displayOrder=rand");
       this.shuffleArray(arr);
-    } else if (order == "by_freq") {
+    } else if (order == PassageUtils.BY_FREQ) {
       //console.log("displayOrder=by_freq");
       arr = arr.sort((a: Passage, b: Passage) => {
         return (a.frequencyDays - b.frequencyDays);
       });
-    } else if (order == "by_last_practiced_time") {
+    } else if (order == PassageUtils.BY_LAST_PRACTICED) {
       //console.log("displayOrder=by_last_practiced_time");
       arr = arr.sort((a: Passage, b: Passage) => {
         return (a.last_viewed_num - b.last_viewed_num);
@@ -315,7 +318,7 @@ export class PassageUtils {
     });
   }
 
-  public static randomizeWithinFrequencyGroups(passages: Passage[]): Passage[] {
+  public static sortWithinFrequencyGroups(passages: Passage[], order: string): Passage[] {
     let frequencyGroups = {};
     for (let passage of passages) {
       let frequencyGroup: Passage[] = frequencyGroups[passage.frequencyDays];
@@ -339,8 +342,12 @@ export class PassageUtils {
     });
     for (let numFreq of numFrequencies) {
       let passagesForFrequency: Passage[] = frequencyGroups[numFreq + ""];
-      // randomize this group...
-      passagesForFrequency.sort(() => Math.random() - 0.5);
+      if (order === PassageUtils.RAND) {
+        // randomize this group...
+        passagesForFrequency.sort(() => Math.random() - 0.5);
+      } else if (order === PassageUtils.BY_LAST_PRACTICED) {
+        passagesForFrequency.sort((a, b) => a.last_viewed_num - b.last_viewed_num);
+      }
       // now append to the return array
       returnPassageArray = returnPassageArray.concat(passagesForFrequency);
     }

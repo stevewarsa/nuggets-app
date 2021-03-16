@@ -42,11 +42,11 @@ export class MyVerseListComponent implements OnInit {
     let passage: Passage = this.passagesByRef[passageRef];
     console.log(passage);
     // let options: any = {
-    //   timeOut: 5000, 
+    //   timeOut: 5000,
     //   enableHtml: true
     // };
     // this.toastr.info("<strong>Passage ID</strong>: " + passage.passageId + "<br><strong>Frequency Level</strong>: " + passage.frequencyDays + "<br><strong>Last Practiced</strong>: " + passage.last_viewed_str, "Passage Details", options);
-    this.route.navigate(['/practice'], {queryParams: { mode: 'by_psgtxt', order: 'by_freq', passageId: passage.passageId}});
+    this.route.navigate(['/practice'], {queryParams: { mode: 'by_psgtxt', order: PassageUtils.BY_FREQ, passageId: passage.passageId}});
 
   }
 

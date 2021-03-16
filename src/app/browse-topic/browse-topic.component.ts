@@ -33,7 +33,7 @@ export class BrowseTopicComponent implements OnInit {
     this.searching = true;
     this.searchingMessage = 'Retrieving passages for topic ' + topicId + '...';
     this.memoryService.getPassagesForTopic(topicId).subscribe((passages: Passage[]) => {
-      if (topicOrder === 'rand') {
+      if (topicOrder === PassageUtils.RAND) {
         PassageUtils.shuffleArray(passages);
       }
       this.passages = passages;

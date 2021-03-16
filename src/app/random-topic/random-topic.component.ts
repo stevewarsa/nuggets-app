@@ -9,7 +9,7 @@ import { PassageUtils } from 'src/app/passage-utils';
   animations: [
     trigger('newTopic', [
         transition('* => *', [
-          style({opacity: 0.5, transform: 'scale(0.8)'}), 
+          style({opacity: 0.5, transform: 'scale(0.8)'}),
           animate('300ms ease-in', style({opacity: 1, transform: 'scale(1)'}))
         ])
       ])
@@ -78,7 +78,7 @@ export class RandomTopicComponent implements OnInit {
   }
 
   browseSelectedTopic() {
-    this.route.navigate(['browseTopic'], {queryParams: {topicId: this.currentTopic.id, order: 'rand'}});
+    this.route.navigate(['browseTopic'], {queryParams: {topicId: this.currentTopic.id, order: PassageUtils.RAND}});
   }
 
   logIt(event: any, mode: string) {

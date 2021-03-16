@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MemoryService } from 'src/app/memory.service';
+import {PassageUtils} from "src/app/passage-utils";
 
 @Component({
   templateUrl: './topic-list.component.html'
@@ -29,6 +30,6 @@ export class TopicListComponent implements OnInit {
   }
 
   browseTopic(topicToBrowse: any) {
-    this.route.navigate(['browseTopic'], {queryParams: {topicId: topicToBrowse.id, order: 'rand'}});
+    this.route.navigate(['browseTopic'], {queryParams: {topicId: topicToBrowse.id, order: PassageUtils.RAND}});
   }
 }
