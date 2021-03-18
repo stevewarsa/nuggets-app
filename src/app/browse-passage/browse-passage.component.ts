@@ -60,8 +60,8 @@ export class BrowsePassageComponent implements OnInit {
       this.startVerseSelected = -1;
       this.endVerseSelected = -1;
       if (this._passage.startVerse === this._passage.endVerse) {
-        this.startVerseSelected = 0;
-        this.endVerseSelected = 0;
+        this.startVerseSelected = this._passage.startVerse;
+        this.endVerseSelected = this._passage.startVerse;
         this.prepareForCopyToClipboard();
       }
       let urlQuery: string;
