@@ -7,7 +7,6 @@ import { Router } from '@angular/router';
 import { PassageUtils } from 'src/app/passage-utils';
 
 @Component({
-  selector: 'mem-login',
   templateUrl: './login.component.html'
 })
 export class LoginComponent implements OnInit {
@@ -80,7 +79,7 @@ export class LoginComponent implements OnInit {
     }
     this.showLoggingIn = true;
     this.user.name = newUserName;
-    this.user.nameSelected = newUserName; 
+    this.user.nameSelected = newUserName;
     this.memoryService.doLogin(newUserName).subscribe((response: string) => {
       console.log("Login complete - data=" + response);
       if (response === "success") {
