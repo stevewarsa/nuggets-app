@@ -1,13 +1,14 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import {Component, OnInit, ViewChild, ElementRef, AfterViewInit} from '@angular/core';
 import { MemoryService } from 'src/app/memory.service';
 import { Router } from '@angular/router';
 
 @Component({
   templateUrl: './add-nonbible-quote.component.html'
 })
-export class AddNonbibleQuoteComponent implements OnInit {
+export class AddNonbibleQuoteComponent implements OnInit, AfterViewInit {
   quote: string = "";
   @ViewChild('quoteInput') promptInput: ElementRef;
+  rowCount: number = 5;
 
   constructor(private memoryService: MemoryService, private route: Router) { }
 
@@ -25,11 +26,9 @@ export class AddNonbibleQuoteComponent implements OnInit {
   }
 
   changeQuote(event: any) {
-    //this.quote = event.target.value;
-    const textArea = this.promptInput.nativeElement;
-    textArea.style.overflow = 'hidden';
-    textArea.style.height = 'auto';
-    textArea.style.height = textArea.scrollHeight + 'px';
+    this.quote = event.target.value;
+    let lineFeeds = this.quote.split("\n").length * 2;
+    this.rowCount = Math.ceil((this.quote.length + lineFeeds) / this.promptInput.nativeElement.cols);
   }
 
   submit() {
