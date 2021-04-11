@@ -15,9 +15,10 @@ function objectToArray($d) {
     }
 }
 
-$db = new SQLite3('db/biblenuggets.db');
+$user = $_GET['user'];
+$db = new SQLite3('db/memory_' . $user . '.db');
 $id = $_GET['nugget_id'];
-$statement = $db->prepare('select book_id, chapter, start_verse, end_verse from passage where passage_id = :id;');
+$statement = $db->prepare('select book_id, chapter, start_verse, end_verse from nugget where nugget_id = :id;');
 $statement->bindValue(':id', $id);
 $results = $statement->execute();
 $row = $results->fetchArray();

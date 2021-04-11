@@ -1,8 +1,9 @@
 <?php
 //header('Access-Control-Allow-Origin: *');
-$db = new SQLite3('db/biblenuggets.db');
+$user = $_GET['user'];
+$db = new SQLite3('db/memory_' . $user . '.db');
 
-$results = $db->query('select passage_id from passage');
+$results = $db->query('select nugget_id from nugget');
 header('Content-Type: application/json; charset=utf8');
 $arrayName = array();
 while ($row = $results->fetchArray()) {

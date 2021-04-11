@@ -51,7 +51,7 @@ export class BrowseNuggetsComponent implements OnInit {
 
   retrievePassage() {
     console.log('Current Index: ' + this.currentIndex);
-    let passageId: number = parseInt(this.passageIds[this.currentIndex].passage_id);
+    let passageId: number = parseInt(this.passageIds[this.currentIndex].nugget_id);
     this.searching = true;
     this.searchingMessage = 'Retrieving passage ...';
     this.memoryService.getPassageById(passageId, this.selectedTranslation).subscribe((returnedPassage: Passage) => {

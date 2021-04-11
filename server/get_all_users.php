@@ -6,7 +6,7 @@ function newest($a, $b) {
 }
 
 $userArray = array();
-$files = glob('db/memory_*');
+$files = glob('db/memory_*.db');
 uasort($files, "newest");
 foreach ($files as $file) {
 	$fname = basename($file);

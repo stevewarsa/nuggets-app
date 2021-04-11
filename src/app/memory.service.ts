@@ -60,8 +60,9 @@ export class MemoryService {
   }
 
   public getPassageById(passageId: number, selectedTranslation: string): Observable<Passage> {
-    console.log('MemoryService.getPassageById - calling ' + this._url + 'get_nugget_by_id.php?nugget_id=' + passageId + '&translation=' + selectedTranslation);
-    return this.httpService.get<Passage>(this._url + 'get_nugget_by_id.php?nugget_id=' + passageId + '&translation=' + selectedTranslation);
+
+    console.log('MemoryService.getPassageById - calling ' + this._url + 'get_nugget_by_id.php?user=' + this.currentUser + '&nugget_id=' + passageId + '&translation=' + selectedTranslation);
+    return this.httpService.get<Passage>(this._url + 'get_nugget_by_id.php?user=' + this.currentUser + '&nugget_id=' + passageId + '&translation=' + selectedTranslation);
   }
 
   public getChapter(book: string, chapter: number, translation: string): Observable<Passage> {
@@ -129,8 +130,8 @@ export class MemoryService {
   }
 
   public getTopicList(): Observable<any[]> {
-    console.log('MemoryService.getTopicList - calling ' + this._url + 'get_tag_list.php');
-    return this.httpService.get<any[]>(this._url + 'get_tag_list.php');
+    console.log('MemoryService.getTopicList - calling ' + this._url + 'get_tag_list.php?user=' + this.currentUser);
+    return this.httpService.get<any[]>(this._url + 'get_tag_list.php?user=' + this.currentUser);
   }
 
   public getQuoteList(userName?: string): Observable<Quote[]> {
@@ -152,8 +153,8 @@ export class MemoryService {
   }
 
   public getPassagesForTopic(topicId: number): Observable<Passage[]> {
-    console.log('MemoryService.getPassagesForTopic - calling ' + this._url + 'get_tag_list.php?tagId=' + topicId);
-    return this.httpService.get<Passage[]>(this._url + 'get_tag_list.php?tagId=' + topicId);
+    console.log('MemoryService.getPassagesForTopic - calling ' + this._url + 'get_tag_list.php?tagId=' + topicId + '&user=' + this.currentUser);
+    return this.httpService.get<Passage[]>(this._url + 'get_tag_list.php?tagId=' + topicId + '&user=' + this.currentUser);
   }
 
   public updateLastViewed(userName: string, passageId: number, lastViewedNum: number, lastViewedString: string): Observable<string> {
@@ -224,8 +225,8 @@ export class MemoryService {
   }
 
   public getNuggetIdList(): Observable<any[]> {
-    console.log('MemoryService.getNuggetIdList - calling ' + this._url + 'get_nugget_id_list.php');
-    return this.httpService.get<any[]>(this._url + 'get_nugget_id_list.php');
+    console.log('MemoryService.getNuggetIdList - calling ' + this._url + 'get_nugget_id_list.php?user=' + this.currentUser);
+    return this.httpService.get<any[]>(this._url + 'get_nugget_id_list.php?user=' + this.currentUser);
   }
 
   public copyDbToGuestDb(): Observable<string> {
