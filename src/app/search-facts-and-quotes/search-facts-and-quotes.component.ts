@@ -20,8 +20,8 @@ export class SearchFactsAndQuotesComponent implements OnInit {
   resultStyle: string = "list";
 
   constructor(
-    private memoryService: MemoryService, 
-    private route: Router, 
+    private memoryService: MemoryService,
+    private route: Router,
     private clipboardService: ClipboardService,
     public toastr: ToastrService,
     private modalHelper: ModalHelperService) { }
@@ -62,7 +62,10 @@ export class SearchFactsAndQuotesComponent implements OnInit {
     this.searchingMessage = "Searching for '" + this.searchPhrase + "' in " + this.searchCategory + "...";
     this.memoryService.searchFactOrQuote(searchParam).subscribe((results: any[]) => {
       console.log(results);
-      if (this.resultStyle === "list") {
+      if (!results || results.length === 0) {
+        this.searching = false;
+        this.searchingMessage = null;
+      } else if (this.resultStyle === "list") {
         this.searchResults = results;
         this.searching = false;
         this.searchingMessage = null;

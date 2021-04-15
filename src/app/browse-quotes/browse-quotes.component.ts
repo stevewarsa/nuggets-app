@@ -279,7 +279,9 @@ export class BrowseQuotesComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     setTimeout(() => {
-      this.colCount = this.editTextElem.nativeElement.cols;
+      if (this.editTextElem) {
+        this.colCount = this.editTextElem.nativeElement.cols;
+      }
     }, 500);
   }
 
