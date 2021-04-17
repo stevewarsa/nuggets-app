@@ -17,6 +17,7 @@ export class ChapterSelectionComponent implements OnInit {
   isChapterlistCollapsed: boolean = true;
   isTranslCollapsed: boolean = true;
   translationOptions: string[] = ['niv', 'nas', 'nkj', 'esv', 'kjv', 'csb', 'nlt', 'bbe', 'asv'];
+  showHighlight: boolean = false;
 
   constructor(private memoryService: MemoryService, private route: Router) { }
 
@@ -88,6 +89,13 @@ export class ChapterSelectionComponent implements OnInit {
   }
 
   goToChapter() {
-    this.route.navigate(['/viewChapter'], {queryParams: {book: this.book, chapter: this.chapter, translation: this.translation}});
+    this.route.navigate(['/viewChapter'],
+      {queryParams: {
+        book: this.book,
+          chapter: this.chapter,
+          translation: this.translation,
+          highlightNuggets: this.showHighlight ? "Y" : "N"
+        }
+      });
   }
 }

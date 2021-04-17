@@ -123,6 +123,58 @@ export class PassageUtils {
     return verseText;
   }
 
+  public static getFormattedPassageTextHighlightMatches(passage: Passage, showVerseNumbers: boolean,
+                                                        matches: {
+                                                          nuggetId: number,
+                                                          bookId: number,
+                                                          chapter: number,
+                                                          startVerse: number,
+                                                          endVerse: number}[]): string {
+    let verseLen: number = passage.verses.length;
+    let verseText: string = "";
+    for (let i = 0; i < verseLen; i++) {
+      let versePartLen: number = passage.verses[i].verseParts.length;
+      for (let j = 0; j < versePartLen; j++) {
+        if (j === 0 && showVerseNumbers) {
+          verseText += "<span class='verse_num'>"
+            + passage.verses[i].verseParts[j].verseNumber
+            + "</span> ";
+        }
+        let isMatch = false;
+        for (let match of matches) {
+          if (passage.verses[i].verseParts[j].verseNumber >= match.startVerse && passage.verses[i].verseParts[j].verseNumber <= match.endVerse) {
+            isMatch = true;
+            break;
+          }
+        }
+        if (passage.verses[i].verseParts[j].wordsOfChrist) {
+          if (isMatch) {
+            verseText += "<span class='wordsOfChrist matchNugget'>";
+            verseText += passage.verses[i].verseParts[j].verseText
+              + " ";
+            verseText += "</span>";
+          } else {
+            verseText += "<span class='wordsOfChrist'>";
+            verseText += passage.verses[i].verseParts[j].verseText
+              + " ";
+            verseText += "</span>";
+          }
+        } else {
+          if (isMatch) {
+            verseText += "<span class='matchNugget'>";
+            verseText += passage.verses[i].verseParts[j].verseText
+              + " ";
+            verseText += "</span>";
+          } else {
+            verseText += passage.verses[i].verseParts[j].verseText
+              + " ";
+          }
+        }
+      }
+    }
+    return verseText;
+  }
+
   public static getFormattedVersesAsArray(passage: Passage): VerseNumAndText[] {
     let verses: VerseNumAndText[] = [];
     let verseLen: number = passage.verses.length;

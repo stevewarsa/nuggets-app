@@ -7,7 +7,13 @@
   </div>
 </div>
 <div *ngIf="!searching" class="container" (swipeleft)="swipe($event.type)" (swiperight)="swipe($event.type)">
-  <div class="row">
+  <div [hidden]="memoryService.nuggetIdList === null || memoryService.nuggetIdList.length === 0" class="row mb-2">
+    <div class="col text-center">
+      <input type="checkbox" name="showHighlight" [ngModel]="highlightNuggets" (click)="updateHighlight($event.target.checked)"/>
+      Highlight Nuggets
+    </div>
+  </div>
+  <div class="row mt-2">
     <div class="col-md col-lg col-sm" style="text-align: center;">
       <div class="psg-nav">
         <a class="psg-nav-icon" *ngIf="_passage?.startVerse !== _passage?.endVerse" (click)="selectForCopy(content)">

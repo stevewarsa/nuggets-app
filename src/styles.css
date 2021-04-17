@@ -30,6 +30,10 @@ a {
 	color: #FF0000;
 }
 
+.matchNugget {
+  background-color: #8A2BE2FF;
+}
+
 .verse_num {
 	font-weight: normal;
 	font-size: 0.75em;
@@ -69,7 +73,7 @@ a {
 }
 
 .main-menu-item {
-	background: black !important; 
+	background: black !important;
 	border: 2px solid white !important;
 }
 
@@ -78,5 +82,5 @@ a {
 }
 
 .psg-nav-icon {
-	margin: 9px; 
+	margin: 9px;
 }

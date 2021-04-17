@@ -5,6 +5,7 @@ import { PassageUtils } from 'src/app/passage-utils';
 import { NgbModalRef, NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import {VerseNumAndText} from "src/app/verse-num-and-text";
+import {MemoryService} from "src/app/memory.service";
 
 @Component({
   selector: 'mem-browse-passage',
@@ -35,14 +36,16 @@ export class BrowsePassageComponent implements OnInit {
   startVerseSelected: number = -1;
   endVerseSelected: number = -1;
   interlinearURL: string;
+  private matchingPassages: {nuggetId: number, bookId: number, chapter: number, startVerse: number, endVerse: number}[] = [];
 
-  constructor(private modalService: NgbModal, public toastr: ToastrService) { }
+  constructor(private modalService: NgbModal, public toastr: ToastrService, public memoryService: MemoryService) { }
 
   @Output() nextEvent: EventEmitter<string>  = new EventEmitter<string>();
   @Output() prevEvent: EventEmitter<string>  = new EventEmitter<string>();
   @Output() changeTranslationEvent: EventEmitter<string>  = new EventEmitter<string>();
 
   @Input() showProgressInLine: boolean = true;
+  @Input() highlightNuggets: boolean = false;
   @Input() currentIndex: number = -1;
   @Input() passagesLength: number = -1;
   @Input() selectedTranslation: string;
@@ -53,8 +56,13 @@ export class BrowsePassageComponent implements OnInit {
     if (passage) {
       console.log("Setting passage...");
       this._passage = passage;
+      this.matchNuggetsWithinChapter();
       this.passageRef = PassageUtils.getPassageString(this._passage, this.currentIndex, this.passagesLength, this.selectedTranslation, this.shortBook, this.showProgressInLine);
-      this.formattedPassageText = PassageUtils.getFormattedPassageText(this._passage, true);
+      if (this.highlightNuggets && this.matchingPassages && this.matchingPassages.length > 0) {
+        this.formattedPassageText = PassageUtils.getFormattedPassageTextHighlightMatches(this._passage, true, this.matchingPassages);
+      } else {
+        this.formattedPassageText = PassageUtils.getFormattedPassageText(this._passage, true);
+      }
       this.versesForSelection = PassageUtils.getFormattedVersesAsArray(this._passage);
       this.passageForClipboardAsArray = PassageUtils.getPassageForClipboardAsArray(this._passage);
       this.startVerseSelected = -1;
@@ -72,6 +80,22 @@ export class BrowsePassageComponent implements OnInit {
       }
       this.interlinearURL = "https://www.biblestudytools.com/interlinear-bible/passage/?q=" + urlQuery;
     }
+  }
+
+  private matchNuggetsWithinChapter() {
+    if (this.memoryService.nuggetIdList.length) {
+      console.log("Attempting to match verses from nuggets within current passage...");
+      this.matchingPassages = this.memoryService.nuggetIdList
+        .filter(nug => nug.bookId === this.memoryService.getBookId(this._passage.bookName))
+        .filter(nug => nug.chapter === this._passage.chapter);
+      if (this.matchingPassages.length) {
+        console.log("Found " + this.matchingPassages.length + " passages matching current chapter:");
+        console.log(this.matchingPassages);
+      } else {
+        console.log("Did not find any matching passages to the current passage...");
+      }
+    }
+
   }
 
   ngOnInit() {
@@ -232,5 +256,14 @@ export class BrowsePassageComponent implements OnInit {
   logIt(event: any, mode: string) {
     console.log('Here is the mode: ' + mode + '.  Here is the event: ');
     console.log(event);
+  }
+
+  updateHighlight(checked: boolean) {
+    this.highlightNuggets = checked;
+    if (this.highlightNuggets && this.matchingPassages && this.matchingPassages.length > 0) {
+      this.formattedPassageText = PassageUtils.getFormattedPassageTextHighlightMatches(this._passage, true, this.matchingPassages);
+    } else {
+      this.formattedPassageText = PassageUtils.getFormattedPassageText(this._passage, true);
+    }
   }
 }
