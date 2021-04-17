@@ -24,18 +24,28 @@ export class BrowseNuggetsComponent implements OnInit {
       this.route.navigate(['']);
       return;
     }
-    this.searching = true;
-    this.searchingMessage = 'Retrieving nuggets....';
-    this.memoryService.getNuggetIdList().subscribe((nuggetIds: any[]) => {
-      PassageUtils.shuffleArray(nuggetIds);
-      this.passageIds = nuggetIds;
-      this.memoryService.getPreferences().subscribe(prefs => {
-        this.selectedTranslation = PassageUtils.getPreferredTranslationFromPrefs(prefs, 'niv');
-        this.currentIndex = 0;
-        this.retrievePassage();
-        this.searching = false;
-        this.searchingMessage = null;
+    if (this.memoryService.nuggetIdList.length === 0) {
+      this.searching = true;
+      this.searchingMessage = 'Retrieving nuggets....';
+      this.memoryService.getNuggetIdList().subscribe((nuggetIds: any[]) => {
+        PassageUtils.shuffleArray(nuggetIds);
+        this.passageIds = nuggetIds;
+        this.updateSelectedTranslation();
       });
+    } else {
+      this.passageIds = this.memoryService.nuggetIdList;
+      PassageUtils.shuffleArray(this.passageIds);
+      this.updateSelectedTranslation();
+    }
+  }
+
+  private updateSelectedTranslation() {
+    this.memoryService.getPreferences().subscribe(prefs => {
+      this.selectedTranslation = PassageUtils.getPreferredTranslationFromPrefs(prefs, 'niv');
+      this.currentIndex = 0;
+      this.retrievePassage();
+      this.searching = false;
+      this.searchingMessage = null;
     });
   }
 
@@ -51,7 +61,7 @@ export class BrowseNuggetsComponent implements OnInit {
 
   retrievePassage() {
     console.log('Current Index: ' + this.currentIndex);
-    let passageId: number = parseInt(this.passageIds[this.currentIndex].nugget_id);
+    let passageId: number = parseInt(this.passageIds[this.currentIndex].nuggetId);
     this.searching = true;
     this.searchingMessage = 'Retrieving passage ...';
     this.memoryService.getPassageById(passageId, this.selectedTranslation).subscribe((returnedPassage: Passage) => {

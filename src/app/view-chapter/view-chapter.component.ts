@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { MemoryService } from 'src/app/memory.service';
 import { ActivatedRoute } from '@angular/router';
 import { Constants } from 'src/app/constants';
+import {PassageUtils} from "src/app/passage-utils";
 
 @Component({
   templateUrl: './view-chapter.component.html'
@@ -42,7 +43,6 @@ export class ViewChapterComponent implements OnInit {
     this.searching = true;
     if (this.startVerse !== -1 && this.endVerse !== -1) {
       this.searchingMessage = 'Retrieving ' + this.book + ', chapter ' + this.chapter + ', start verse ' + this.startVerse + ', end verse ' + this.endVerse + '...';
-      let passage: Passage = new Passage();
       this.memoryService.getPassageByKeys(this.book, this.chapter, this.startVerse, this.endVerse, this.translation).subscribe((returnPassage: Passage) => {
         console.log(returnPassage);
         this.passage = returnPassage;
@@ -58,6 +58,23 @@ export class ViewChapterComponent implements OnInit {
         this.searchingMessage = null;
       });
     }
+    this.matchNuggetsWithinChapter();
+  }
+
+  private matchNuggetsWithinChapter() {
+    if (this.memoryService.nuggetIdList.length) {
+      console.log("Attempting to match verses from nuggets within current chapter...");
+      let matchingPassages = this.memoryService.nuggetIdList
+        .filter(nug => nug.bookId === this.memoryService.getBookId(this.book))
+        .filter(nug => nug.chapter === this.chapter);
+      if (matchingPassages.length) {
+        console.log("Found " + matchingPassages.length + " passages matching current chapter:");
+        console.log(matchingPassages);
+      } else {
+        console.log("Did not find any matching passages to the current chapter...");
+      }
+    }
+
   }
 
   next() {

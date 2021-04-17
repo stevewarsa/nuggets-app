@@ -20,8 +20,17 @@ export class MemoryService {
   public GUEST_USER: string = 'Guest';
   public searchQuotesResult: any[] = null;
   currentPassageChangeEvent: Subject<Passage> = new Subject<Passage>();
+  private _nuggetIdList = [];
 
   constructor(private httpService:HttpClient) { }
+
+  public set nuggetIdList(nuggets: any[]) {
+    this._nuggetIdList = nuggets;
+  }
+
+  public get nuggetIdList(): any[] {
+    return this._nuggetIdList;
+  }
 
   public getMemoryPassageList(user: string): Observable<Passage[]> {
     console.log('MemoryService.getMemoryPassageList - calling ' + this._url + 'get_mempsg_list.php...');

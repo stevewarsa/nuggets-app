@@ -33,6 +33,11 @@ export class TopNavComponent implements OnInit, OnDestroy {
     this.passageSubscription = this.memoryService.currentPassageChangeEvent.subscribe((passage: Passage) => {
       this.currentPassage = this.memoryService.getCurrentPassage();
     });
+    if (this.memoryService.nuggetIdList.length === 0) {
+      this.memoryService.getNuggetIdList().subscribe((nuggetIds: any[]) => {
+        this.memoryService.nuggetIdList = nuggetIds;
+      });
+    }
   }
 
   ngOnDestroy() {
