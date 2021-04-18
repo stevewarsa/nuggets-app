@@ -64,7 +64,7 @@ export class BrowsePassageComponent implements OnInit {
       } else {
         this.formattedPassageText = PassageUtils.getFormattedPassageText(this._passage, true);
       }
-      this.versesForSelection = PassageUtils.getFormattedVersesAsArray(this._passage);
+      this.versesForSelection = PassageUtils.getFormattedVersesAsArray(this._passage, this.highlightNuggets ? this.matchingPassages : []);
       this.passageForClipboardAsArray = PassageUtils.getPassageForClipboardAsArray(this._passage);
       this.startVerseSelected = -1;
       this.endVerseSelected = -1;
@@ -266,5 +266,6 @@ export class BrowsePassageComponent implements OnInit {
     } else {
       this.formattedPassageText = PassageUtils.getFormattedPassageText(this._passage, true);
     }
+    this.versesForSelection = PassageUtils.getFormattedVersesAsArray(this._passage, this.highlightNuggets ? this.matchingPassages : []);
   }
 }

@@ -175,19 +175,44 @@ export class PassageUtils {
     return verseText;
   }
 
-  public static getFormattedVersesAsArray(passage: Passage): VerseNumAndText[] {
+  public static getFormattedVersesAsArray(passage: Passage,
+                                          matches: {
+                                            nuggetId: number,
+                                            bookId: number,
+                                            chapter: number,
+                                            startVerse: number,
+                                            endVerse: number}[]): VerseNumAndText[] {
     let verses: VerseNumAndText[] = [];
     let verseLen: number = passage.verses.length;
     for (let i = 0; i < verseLen; i++) {
       let verseText: string = "";
       let versePartLen: number = passage.verses[i].verseParts.length;
       for (let j = 0; j < versePartLen; j++) {
+        let isMatch = false;
+        for (let match of matches) {
+          if (passage.verses[i].verseParts[j].verseNumber >= match.startVerse && passage.verses[i].verseParts[j].verseNumber <= match.endVerse) {
+            isMatch = true;
+            break;
+          }
+        }
         if (passage.verses[i].verseParts[j].wordsOfChrist) {
-          verseText += "<span class='wordsOfChrist'>";
-          verseText += passage.verses[i].verseParts[j].verseText + " ";
-          verseText += "</span>";
+          if (isMatch) {
+            verseText += "<span class='wordsOfChrist matchNugget'>";
+            verseText += passage.verses[i].verseParts[j].verseText + " ";
+            verseText += "</span>";
+          } else {
+            verseText += "<span class='wordsOfChrist'>";
+            verseText += passage.verses[i].verseParts[j].verseText + " ";
+            verseText += "</span>";
+          }
         } else {
-          verseText += passage.verses[i].verseParts[j].verseText + " ";
+          if (isMatch) {
+            verseText += "<span class='matchNugget'>";
+            verseText += passage.verses[i].verseParts[j].verseText + " ";
+            verseText += "</span>";
+          } else {
+            verseText += passage.verses[i].verseParts[j].verseText + " ";
+          }
         }
       }
       let currVerse = new VerseNumAndText();
