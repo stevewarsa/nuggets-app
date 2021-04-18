@@ -16,8 +16,11 @@
   <div class="row mt-2">
     <div class="col-md col-lg col-sm" style="text-align: center;">
       <div class="psg-nav">
-        <a class="psg-nav-icon" *ngIf="_passage?.startVerse !== _passage?.endVerse" (click)="selectForCopy(content)">
+        <a class="psg-nav-icon" *ngIf="_passage?.startVerse !== _passage?.endVerse" (click)="selectionPopup(content, 'copy')">
           <i class="fa fa-copy" style="color: coral;"></i>
+        </a>
+        <a class="psg-nav-icon" *ngIf="_passage?.startVerse !== _passage?.endVerse" (click)="selectionPopup(content, 'add_nugget')">
+          <i class="fa fa-hand-rock-o" style="color: fuchsia;"></i>
         </a>
         <a class="psg-nav-icon" *ngIf="_passage?.startVerse === _passage?.endVerse" ngxClipboard [cbContent]="passageTextForClipboard" (cbOnSuccess)="clipboardCopyComplete()">
           <i class="fa fa-copy" style="color: coral;"></i>
@@ -56,7 +59,7 @@
   </div>
   <ng-template #content let-d="dismiss">
     <div class="modal-header">
-      <h4 class="modal-title">Select Verses To Copy</h4>
+      <h4 class="modal-title">Select Verses To {{getTitleByAction()}}</h4>
       <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
         <span aria-hidden="true">&times;</span>
       </button>
@@ -66,14 +69,15 @@
         <ul *ngIf="versesForSelection && versesForSelection.length > 0" class="list-group">
           <li *ngFor="let verse of versesForSelection" class="list-group-item text-white" style="background: black;">
             <label class="checkbox-inline">
-              <input type="checkbox" name="{{verse.verseNum}}" (click)="selectVerseForCopy(verse.verseNum, $event.target.checked)" [checked]="verse.verseNum === startVerseSelected || verse.verseNum === endVerseSelected" /><span class="ml-2" innerHTML="{{getVerseDisplayForCheckbox(verse)}}"></span>
+              <input type="checkbox" name="{{verse.verseNum}}" (click)="selectVerseForAction(verse.verseNum, $event.target.checked)" [checked]="verse.verseNum === startVerseSelected || verse.verseNum === endVerseSelected" /><span class="ml-2" innerHTML="{{getVerseDisplayForCheckbox(verse)}}"></span>
             </label>
           </li>
         </ul>
       </div>
     </div>
     <div class="modal-footer">
-        <button [disabled]="startVerseSelected === -1 || endVerseSelected === -1" type="button" id="cbCopy" class="btn btn-link no-padding-top-bottom" ngxClipboard [cbContent]="passageTextForClipboard" (cbOnSuccess)="clipboardCopyComplete()"><i class="fa fa-copy" style="margin-right: 5px; font-size: 32px !important;"></i> <span class="helv-white">Copy</span></button>
+      <button [hidden]="actionNm !== 'copy'" [disabled]="startVerseSelected === -1 || endVerseSelected === -1" type="button" id="cbCopy" class="btn btn-link no-padding-top-bottom" ngxClipboard [cbContent]="passageTextForClipboard" (cbOnSuccess)="clipboardCopyComplete()"><i class="fa fa-copy" style="margin-right: 5px; font-size: 32px !important;"></i> <span class="helv-white">Copy</span></button>
+      <button [hidden]="actionNm !== 'add_nugget'" [disabled]="startVerseSelected === -1 || endVerseSelected === -1 || selectedPassageForAddNugget === null" type="button" id="addNugget" class="btn btn-link no-padding-top-bottom" (click)="doAddNugget()"><i class="fa fa-plus" style="margin-right: 5px; font-size: 32px !important;"></i> <span class="helv-white">Add Nugget</span></button>
     </div>
   </ng-template>
 </div>

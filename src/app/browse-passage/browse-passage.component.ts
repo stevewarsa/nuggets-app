@@ -37,6 +37,8 @@ export class BrowsePassageComponent implements OnInit {
   endVerseSelected: number = -1;
   interlinearURL: string;
   private matchingPassages: {nuggetId: number, bookId: number, chapter: number, startVerse: number, endVerse: number}[] = [];
+  actionNm: string = null;
+  selectedPassageForAddNugget: Passage = null;
 
   constructor(private modalService: NgbModal, public toastr: ToastrService, public memoryService: MemoryService) { }
 
@@ -133,10 +135,15 @@ export class BrowsePassageComponent implements OnInit {
     this.nextEvent.emit('next');
   }
 
-  selectForCopy(content) {
+  selectionPopup(content, actionNm: string) {
     this.startVerseSelected = this.versesForSelection[0].verseNum;
     this.endVerseSelected = this.versesForSelection[this.versesForSelection.length - 1].verseNum;
-    this.prepareForCopyToClipboard();
+    this.actionNm = actionNm;
+    if (this.actionNm === "copy") {
+      this.prepareForCopyToClipboard();
+    } else if (this.actionNm === "add_nugget") {
+      this.prepareAddNugget();
+    }
     this.openModal = this.modalService.open(content);
     this.openModal.result.then((result) => {
       this.closeResult = `Closed with: ${result}`;
@@ -145,7 +152,7 @@ export class BrowsePassageComponent implements OnInit {
     });
   }
 
-  selectVerseForCopy(verseNum: number, checked: boolean) {
+  selectVerseForAction(verseNum: number, checked: boolean) {
     if (!checked) {
       // this user unchecked a checkbox
       console.log("User unselected checkbox with verse num: " + verseNum);
@@ -198,7 +205,23 @@ export class BrowsePassageComponent implements OnInit {
         }
       }
     }
-    this.prepareForCopyToClipboard();
+    if (this.actionNm === "copy") {
+      this.prepareForCopyToClipboard();
+    } else if (this.actionNm === "add_nugget") {
+      this.prepareAddNugget();
+    }
+  }
+
+
+  private prepareAddNugget() {
+    console.log("prepareAddNugget - startVerse: " + this.startVerseSelected + ", endVerse: " + this.endVerseSelected);
+    if (this.startVerseSelected === -1 || this.endVerseSelected === -1) {
+      console.log("Can't copy verses: prepareAddNugget - startVerse: " + this.startVerseSelected + ", endVerse: " + this.endVerseSelected);
+      return;
+    }
+    this.selectedPassageForAddNugget = PassageUtils.deepClonePassage(this._passage);
+    this.selectedPassageForAddNugget.startVerse = this.startVerseSelected;
+    this.selectedPassageForAddNugget.endVerse = this.endVerseSelected;
   }
 
   private prepareForCopyToClipboard() {
@@ -267,5 +290,26 @@ export class BrowsePassageComponent implements OnInit {
       this.formattedPassageText = PassageUtils.getFormattedPassageText(this._passage, true);
     }
     this.versesForSelection = PassageUtils.getFormattedVersesAsArray(this._passage, this.highlightNuggets ? this.matchingPassages : []);
+  }
+
+  doAddNugget() {
+    console.log("doAddNugget - selected passage:");
+    console.log(this.selectedPassageForAddNugget);
+    this.memoryService.addNugget(this.selectedPassageForAddNugget).subscribe(nuggetId => {
+      this.memoryService.getNuggetIdList().subscribe((nuggetIds: any[]) => {
+        this.memoryService.nuggetIdList = nuggetIds;
+      });
+      if (this.openModal) {
+        this.openModal.close();
+      }
+    });
+  }
+
+  getTitleByAction() {
+    if (this.actionNm === "copy") {
+      return "Copy";
+    } else if (this.actionNm === "add_nugget") {
+      return "Add to Nuggets";
+    }
   }
 }

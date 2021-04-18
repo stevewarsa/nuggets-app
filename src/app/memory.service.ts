@@ -192,6 +192,11 @@ export class MemoryService {
     return this.httpService.get<number>(this._url + 'add_memory_passage_new.php?user=' + this.currentUser + '&translation=' + passage.translationId + '&book=' + passage.bookName + '&chapter=' + passage.chapter + '&start=' + passage.startVerse + '&end=' + passage.endVerse + '&queue=N');
   }
 
+  public addNugget(passage: Passage): Observable<number> {
+    console.log('MemoryService.addNugget - calling ' + this._url + 'add_nugget.php?user=' + this.currentUser + '&book=' + passage.bookName + '&chapter=' + passage.chapter + '&start=' + passage.startVerse + '&end=' + passage.endVerse);
+    return this.httpService.get<number>(this._url + 'add_nugget.php?user=' + this.currentUser + '&book=' + passage.bookName + '&chapter=' + passage.chapter + '&start=' + passage.startVerse + '&end=' + passage.endVerse);
+  }
+
   public addNonBibleMemoryFact(fact: any): Observable<string> {
     fact.user = this.currentUser;
     fact.category = 'fact';
