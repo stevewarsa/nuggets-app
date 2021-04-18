@@ -45,12 +45,13 @@ export class BrowsePassageComponent implements OnInit {
   @Output() changeTranslationEvent: EventEmitter<string>  = new EventEmitter<string>();
 
   @Input() showProgressInLine: boolean = true;
-  @Input() highlightNuggets: boolean = false;
+  highlightNuggets: boolean = false;
   @Input() currentIndex: number = -1;
   @Input() passagesLength: number = -1;
   @Input() selectedTranslation: string;
   @Input() searching: boolean;
   @Input() searchingMessage: string;
+  @Input() showHighlight: boolean = true;
 
   @Input() set passage(passage: Passage) {
     if (passage) {

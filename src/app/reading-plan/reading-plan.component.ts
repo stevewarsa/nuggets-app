@@ -25,7 +25,6 @@ export class ReadingPlanComponent implements OnInit {
   currentUser: string = null;
   currentDayOfWeek: string = null;
   allReadingPlanProgress: {bookId: number, bookName: string, chapter: number, dateRead: string, dayOfWeek: string}[] = [];
-  showHighlight: boolean = false;
 
   constructor(private route: Router, private memoryService: MemoryService) {
     this.booksByDay["Sunday"] = ["romans", "1-corinthians", "2-corinthians", "galatians", "ephesians", "philippians", "colossians", "1-thessalonians", "2-thessalonians", "1-timothy", "2-timothy", "titus", "philemon", "hebrews", "james", "1-peter", "2-peter", "1-john", "2-john", "3-john", "jude"];
@@ -103,7 +102,7 @@ export class ReadingPlanComponent implements OnInit {
 
   goToChapter() {
     this.memoryService.updateReadingPlan(this.currentUser, this.currentDayOfWeek, this.chapterToRead.bookName, this.chapterToRead.bookId, this.chapterToRead.chapter).subscribe(() => {
-      this.route.navigate(['/viewChapter'], {queryParams: {book: this.chapterToRead.bookName, chapter: this.chapterToRead.chapter, translation: this.translation, highlightNuggets: this.showHighlight ? "Y" : "N"}});
+      this.route.navigate(['/viewChapter'], {queryParams: {book: this.chapterToRead.bookName, chapter: this.chapterToRead.chapter, translation: this.translation}});
     });
   }
 }

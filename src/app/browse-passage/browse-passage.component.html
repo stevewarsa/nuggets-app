@@ -7,7 +7,7 @@
   </div>
 </div>
 <div *ngIf="!searching" class="container" (swipeleft)="swipe($event.type)" (swiperight)="swipe($event.type)">
-  <div [hidden]="memoryService.nuggetIdList === null || memoryService.nuggetIdList.length === 0" class="row mb-2">
+  <div [hidden]="memoryService.nuggetIdList === null || memoryService.nuggetIdList.length === 0 || !showHighlight" class="row mb-2">
     <div class="col text-center">
       <input type="checkbox" name="showHighlight" [ngModel]="highlightNuggets" (click)="updateHighlight($event.target.checked)"/>
       Highlight Nuggets

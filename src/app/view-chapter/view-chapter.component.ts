@@ -17,7 +17,6 @@ export class ViewChapterComponent implements OnInit {
   endVerse: number = -1;
   translation: string = null;
   maxChapterByBook: any[];
-  highlightNuggets: boolean = false;
 
   constructor(private memoryService: MemoryService, private activeRoute:ActivatedRoute) { }
 
@@ -32,10 +31,6 @@ export class ViewChapterComponent implements OnInit {
     let endVerse = this.activeRoute.snapshot.queryParamMap.get('endVerse');
     if (endVerse) {
       this.endVerse = parseInt(endVerse);
-    }
-    let highlightNuggets = this.activeRoute.snapshot.queryParamMap.get('highlightNuggets');
-    if (highlightNuggets) {
-      this.highlightNuggets = highlightNuggets === "Y";
     }
     this.memoryService.getMaxChaptersByBook().subscribe((response: any[]) => {
       this.maxChapterByBook = response;
