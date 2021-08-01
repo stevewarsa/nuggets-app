@@ -40,6 +40,7 @@ export class EditPassageComponent implements OnInit {
       distinctUntilChanged(),
       map(term => this.translations.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 8))
     );
+  private userEditedPassageText: boolean = false;
 
   constructor(private memoryService: MemoryService, private route: Router, private location: Location) { }
 
@@ -91,6 +92,7 @@ export class EditPassageComponent implements OnInit {
   changePassageText(event: any) {
     this.currPassageText = event.target.value;
     this.originalChanged = (this.originalPassageText !== this.currPassageText);
+    this.userEditedPassageText = true;
   }
 
   private createPassageFromChanges(): Passage {
@@ -129,13 +131,13 @@ export class EditPassageComponent implements OnInit {
   }
 
   submitChanges() {
-    // assume that there have actually been changes made - button will be disabled 
+    // assume that there have actually been changes made - button will be disabled
     // until changes have been made, so I don't have to worry here
     let passage = this.createPassageFromChanges();
     let updatePassageParam: UpdatePassageParam = new UpdatePassageParam();
-    // only set the 'newText' property if the user has modified the text 
+    // only set the 'newText' property if the user has modified the text
     // only in that case, is it considered an override
-    if (this.currPassageText !== this.originalPassageText) {
+    if (this.userEditedPassageText && this.currPassageText !== this.originalPassageText) {
       updatePassageParam.newText = this.currPassageText;
     }
     updatePassageParam.passage = passage;

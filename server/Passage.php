@@ -19,16 +19,16 @@ class Passage {
     public $endVerse;
 
     public $verseText;
-	
 
-    public $frequencyDays = -1;    
+
+    public $frequencyDays = -1;
     public $last_viewed_str = "N/A";
     public $last_viewed_num = -1;
-	public $passageRefAppendLetter = "";
+    public $passageRefAppendLetter = null;
 
     public $verses = array();
 
-    
+
 
     function addVerse($verse) {
 
@@ -46,7 +46,7 @@ class Verse {
 
     public $verseParts = array();
 
-    
+
 
     function addVersePart($versePart) {
 
